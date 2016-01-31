@@ -22,7 +22,7 @@ CREATE UNIQUE INDEX ON "subreddit" ("name");
 CREATE TABLE "audience" (
     "subreddit" TEXT,
     "crawl_time" TIMESTAMP WITH TIME ZONE,
-    "users_online" INT
+    "audience" INT
 );
 
 CREATE UNIQUE INDEX ON "audience" ("subreddit", "crawl_time");
