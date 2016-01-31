@@ -1,3 +1,5 @@
+// Reddit audiences crawler
+// Rémy Mathieu © 2016
 package main
 
 import (
@@ -24,6 +26,8 @@ func StartCrawlingJob(a *App) {
 	ticker.Stop()
 }
 
+// Crawl retrieves the audience of subreddits for which
+// the last crawl time is more than some minutes.
 func Crawl(a *App) {
 	// crawl each subreddit each 5 minutes
 	five := time.Minute * 5
@@ -38,6 +42,7 @@ func Crawl(a *App) {
 		log.Println("Crawling", subreddit)
 		go func() {
 			if audience, err := GetAudience(subreddit); err == nil {
+				// store the value and update the last crawl time
 				if err := a.DB().InsertSubredditValue(subreddit, audience); err != nil {
 					log.Println("err:", err.Error())
 				} else {
@@ -50,6 +55,8 @@ func Crawl(a *App) {
 	}
 }
 
+// GetAudience gets the subreddit page on reddit
+// and gets the current audience of this subreddit in the DOM.
 func GetAudience(subreddit string) (int, error) {
 	var audience int
 	var err error

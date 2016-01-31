@@ -1,3 +1,5 @@
+// Reddit audiences crawler
+// Rémy Mathieu © 2016
 package main
 
 import (
