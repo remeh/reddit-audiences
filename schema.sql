@@ -12,11 +12,10 @@ CREATE TABLE "subreddit" (
     "name" TEXT default '',
     "creation_time" TIMESTAMP WITH TIME ZONE,
     "last_crawl" TIMESTAMP WITH TIME ZONE,
-    "next_crawl" TIMESTAMP WITH TIME ZONE,
     "active" BOOLEAN
 );
 
-CREATE INDEX ON "subreddit" ("next_crawl");
+CREATE INDEX ON "subreddit" ("last_crawl");
 
 CREATE UNIQUE INDEX ON "subreddit" ("name");
 

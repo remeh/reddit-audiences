@@ -32,3 +32,7 @@ func (a *App) Init() {
 func (a *App) DB() Conn {
 	return a.db
 }
+
+func (a *App) StartJobs() {
+	StartCrawlingJob(a)
+}

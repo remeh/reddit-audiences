@@ -18,7 +18,7 @@ const (
 		WHERE 
 			"last_crawl" <= $1
 			AND
-			"next_crawl" <= $1
+			"active" = true
 		ORDER BY "last_crawl"
 	`
 	INSERT_SUBREDDIT_AUDIENCE = `
@@ -26,6 +26,12 @@ const (
 		(subreddit, crawl_time, audience)
 		VALUES
 		($1, $2, $3)
+	`
+	UPDATE_LAST_CRAWL_TIME = `
+		UPDATE "subreddit"
+		SET
+			"last_crawl" = $2
+		WHERE "name" = $1
 	`
 )
 
@@ -41,10 +47,10 @@ func (c *Conn) Init(config Config) error {
 
 // GetSubredditsToCrawl returns the subreddits which must be
 // crawled as soon as possible.
-func (c *Conn) FindSubredditsToCrawl() ([]string, error) {
+func (c Conn) FindSubredditsToCrawl(after time.Time) ([]string, error) {
 	rv := make([]string, 0)
 
-	r, err := c.db.Query(SUBREDDITS_TO_CRAWL, time.Now())
+	r, err := c.db.Query(SUBREDDITS_TO_CRAWL, after)
 	if err != nil {
 		return rv, err
 	}
@@ -69,11 +75,31 @@ func (c *Conn) FindSubredditsToCrawl() ([]string, error) {
 	return rv, nil
 }
 
-// InsertSubredditValue writes an audience value for the given subreddit.
-func (c *Conn) InsertSubredditValue(subreddit string, value uint) error {
-	_, err := c.db.Exec(INSERT_SUBREDDIT_AUDIENCE, subreddit, time.Now(), value)
+// InsertSubredditValue writes an audience value for the given subreddit
+// and updates the last crawl time of the subreddit.
+func (c Conn) InsertSubredditValue(subreddit string, value int) error {
+	tx, err := c.db.Begin()
 	if err != nil {
 		return err
 	}
-	return nil
+
+	defer tx.Rollback()
+
+	now := time.Now()
+
+	// write the value
+
+	_, err = tx.Exec(INSERT_SUBREDDIT_AUDIENCE, subreddit, now, value)
+	if err != nil {
+		return err
+	}
+
+	// last crawl time
+
+	_, err = tx.Exec(UPDATE_LAST_CRAWL_TIME, subreddit, now)
+	if err != nil {
+		return err
+	}
+
+	return tx.Commit()
 }
