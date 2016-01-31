@@ -18,7 +18,7 @@ const (
 
 func StartCrawlingJob(a *App) {
 	log.Println("info: starts tracking job.")
-	ticker := time.NewTicker(time.Minute * 1)
+	ticker := time.NewTicker(time.Second * 30)
 	for range ticker.C {
 		log.Println("info: tracking job is running.")
 		Crawl(a)
@@ -39,8 +39,8 @@ func Crawl(a *App) {
 	}
 
 	for _, subreddit := range subreddits {
-		log.Println("Crawling", subreddit)
-		go func() {
+		log.Println("info: crawling", subreddit)
+		go func(subreddit string) {
 			if audience, err := GetAudience(subreddit); err == nil {
 				// store the value and update the last crawl time
 				if err := a.DB().InsertSubredditValue(subreddit, audience); err != nil {
@@ -51,7 +51,7 @@ func Crawl(a *App) {
 			} else if err != nil {
 				log.Println("err:", err.Error())
 			}
-		}()
+		}(subreddit)
 	}
 }
 
@@ -66,30 +66,24 @@ func GetAudience(subreddit string) (int, error) {
 		return 0, err
 	}
 
-	doc.Find("p.users-online span.number").Each(func(i int, s *goquery.Selection) {
-		if i > 0 {
-			log.Println("warn: found many times the number value.")
-			return
-		}
+	s := doc.Find("p.users-online span.number").First()
 
-		// it looks like we found a value in the dom
-		value := s.Text()
-		if len(value) == 0 {
-			err = fmt.Errorf("can't retrieve subreddit %s audience", subreddit)
-			return
-		}
+	// it looks like we found a value in the dom
+	value := s.Text()
+	if len(value) == 0 {
+		return 0, fmt.Errorf("can't retrieve subreddit %s audience", subreddit)
+	}
 
-		// sometimes it starts with ~
-		if strings.HasPrefix(value, "~") {
-			value = value[1:]
-		}
-		// , for thousands etc.
-		value = strings.Replace(value, ",", "", -1)
-		// finally trim
-		value = strings.Trim(value, " ")
+	// sometimes it starts with ~
+	if strings.HasPrefix(value, "~") {
+		value = value[1:]
+	}
+	// , for thousands etc.
+	value = strings.Replace(value, ",", "", -1)
+	// finally trim
+	value = strings.Trim(value, " ")
 
-		audience, err = strconv.Atoi(value)
-	})
+	audience, err = strconv.Atoi(value)
 
 	return audience, err
 }
