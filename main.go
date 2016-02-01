@@ -2,10 +2,13 @@
 // Rémy Mathieu © 2016
 package main
 
-import ()
-
 func main() {
 	var app App
 	app.Init()
-	app.StartJobs()
+	go app.StartJobs()
+	app.Listen()
+}
+
+func declareApiRoutes(a *App) {
+
 }
