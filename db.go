@@ -36,7 +36,7 @@ const (
 		WHERE "name" = $1
 	`
 	AUDIENCES_INTERVAL = `
-		SELECT "audience"
+		SELECT "audience", "crawl_time"
 		FROM "audience"
 		WHERE
 			"subreddit" = $1
