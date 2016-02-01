@@ -71,7 +71,7 @@ func GetAudience(subreddit string) (int, error) {
 	// it looks like we found a value in the dom
 	value := s.Text()
 	if len(value) == 0 {
-		return 0, fmt.Errorf("can't retrieve subreddit %s audience", subreddit)
+		return 0, fmt.Errorf("can't retrieve subreddit %s audience: no text value in the dom node.", subreddit)
 	}
 
 	// sometimes it starts with ~
