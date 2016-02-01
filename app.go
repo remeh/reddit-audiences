@@ -3,6 +3,7 @@
 package main
 
 import (
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -12,15 +13,17 @@ import (
 )
 
 type App struct {
-	db     Conn
-	router *mux.Router
-	Config Config
+	db        Conn
+	router    *mux.Router
+	templates *template.Template
+	Config    Config
 }
 
 type Config struct {
-	DB         string `envconfig:"DB,default=host=/var/run/postgresql sslmode=disable user=audiences dbname=audiences password=audiences"`
-	PublicDir  string `envconfig:"DIR,default=static/"`
-	ListenAddr string `envconfig:"ADDR,default=:9000"`
+	DB           string `envconfig:"DB,default=host=/var/run/postgresql sslmode=disable user=audiences dbname=audiences password=audiences"`
+	PublicDir    string `envconfig:"DIR,default=static/"`
+	TemplatesDir string `envconfig:"TEMPLATES,default=templates/"`
+	ListenAddr   string `envconfig:"ADDR,default=:9000"`
 }
 
 func (a *App) Init() {
@@ -33,6 +36,12 @@ func (a *App) Init() {
 
 	// router
 	a.router = mux.NewRouter()
+
+	// read templates
+	if err := a.initTemplates(); err != nil {
+		log.Println("err: can't read templates:", err.Error())
+		os.Exit(1)
+	}
 
 	// open pg connection
 	a.db.Init(a.Config)
@@ -67,4 +76,16 @@ func (a *App) prepareStatic() {
 	// Add the final route, the static assets and pages.
 	a.router.PathPrefix("/").Handler(http.FileServer(http.Dir(a.Config.PublicDir)))
 	log.Println("info: serving static from directory", a.Config.PublicDir)
+}
+
+func (a *App) initTemplates() error {
+	templates, err := ReadTemplates(a)
+
+	if err != nil {
+		return err
+	}
+
+	a.templates = templates
+	log.Println("info: using templates from the directory", a.Config.TemplatesDir)
+	return nil
 }
