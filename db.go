@@ -35,6 +35,16 @@ const (
 			"last_crawl" = $2
 		WHERE "name" = $1
 	`
+	AUDIENCES_INTERVAL = `
+		SELECT "audience"
+		FROM "audience"
+		WHERE
+			"subreddit" = $1
+			AND
+			"crawl_time" >= $2
+			AND
+			"crawl_time" <= $3
+	`
 )
 
 func (c *Conn) Init(config Config) error {
@@ -71,6 +81,34 @@ func (c Conn) FindSubredditsToCrawl(after time.Time) ([]string, error) {
 
 		if len(subreddit) > 0 {
 			rv = append(rv, subreddit)
+		}
+	}
+
+	return rv, nil
+}
+
+func (c Conn) FindAudiencesInterval(subreddit string, start, end time.Time) ([]int, error) {
+	rv := make([]int, 0)
+
+	r, err := c.db.Query(AUDIENCES_INTERVAL, subreddit, start, end)
+	if err != nil {
+		return rv, err
+	}
+
+	if r == nil {
+		return rv, nil
+	}
+
+	defer r.Close()
+
+	for r.Next() {
+		var audience int
+		if err := r.Scan(&audience); err != nil {
+			return rv, err
+		}
+
+		if len(subreddit) > 0 {
+			rv = append(rv, audience)
 		}
 	}
 

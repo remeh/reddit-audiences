@@ -3,7 +3,10 @@
 package main
 
 import (
+	"encoding/json"
+	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -14,5 +17,35 @@ type TodayHandler struct {
 
 func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	println(vars["subreddit"])
+
+	subreddit := vars["subreddit"]
+	if len(subreddit) == 0 {
+		w.WriteHeader(400)
+		return
+	}
+
+	data, err := c.getData(subreddit)
+	if err != nil {
+		log.Println("err:", err.Error())
+		w.WriteHeader(500)
+		return
+	}
+
+	buff, err := json.Marshal(data)
+	if err != nil {
+		log.Println("err:", err.Error())
+		w.WriteHeader(500)
+		return
+	}
+	w.Write(buff)
+
+}
+
+func (c TodayHandler) getData(subreddit string) ([]int, error) {
+	var start, end time.Time
+
+	end = time.Now()
+	start = time.Date(end.Year(), end.Month()+1, end.Day(), 0, 0, 0, 0, end.Location())
+
+	return c.app.DB().FindAudiencesInterval(subreddit, start, end)
 }

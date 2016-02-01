@@ -17,6 +17,8 @@ func (a LogAdapter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	sWriter := &StatusWriter{w, 200}
 	a.handler.ServeHTTP(sWriter, r)
 
+	w.Header().Set("Content-Type", "application/json")
+
 	log.Printf("info: hit: %s %s %s referer[%s] user-agent[%s] addr[%s] code[%d]\n", r.Method, r.URL.String(), r.Proto, r.Referer(), r.UserAgent(), r.RemoteAddr, sWriter.Status)
 }
 
