@@ -44,6 +44,7 @@ const (
 			"crawl_time" >= $2
 			AND
 			"crawl_time" <= $3
+		ORDER BY "crawl_time"
 	`
 )
 
@@ -87,8 +88,8 @@ func (c Conn) FindSubredditsToCrawl(after time.Time) ([]string, error) {
 	return rv, nil
 }
 
-func (c Conn) FindAudiencesInterval(subreddit string, start, end time.Time) ([]int, error) {
-	rv := make([]int, 0)
+func (c Conn) FindAudiencesInterval(subreddit string, start, end time.Time) ([]Audience, error) {
+	rv := make([]Audience, 0)
 
 	r, err := c.db.Query(AUDIENCES_INTERVAL, subreddit, start, end)
 	if err != nil {
@@ -103,12 +104,18 @@ func (c Conn) FindAudiencesInterval(subreddit string, start, end time.Time) ([]i
 
 	for r.Next() {
 		var audience int
-		if err := r.Scan(&audience); err != nil {
+		var crawlTime time.Time
+
+		if err := r.Scan(&audience, &crawlTime); err != nil {
 			return rv, err
 		}
 
 		if len(subreddit) > 0 {
-			rv = append(rv, audience)
+			rv = append(rv, Audience{
+				Subreddit: subreddit,
+				CrawlTime: crawlTime,
+				Audience:  audience,
+			})
 		}
 	}
 

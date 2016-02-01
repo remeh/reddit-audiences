@@ -41,11 +41,11 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (c TodayHandler) getData(subreddit string) ([]int, error) {
+func (c TodayHandler) getData(subreddit string) ([]Audience, error) {
 	var start, end time.Time
 
+	start = time.Date(end.Year(), end.Month(), end.Day(), 0, 0, 0, 0, end.Location())
 	end = time.Now()
-	start = time.Date(end.Year(), end.Month()+1, end.Day(), 0, 0, 0, 0, end.Location())
 
 	return c.app.DB().FindAudiencesInterval(subreddit, start, end)
 }
