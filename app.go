@@ -33,8 +33,6 @@ func (a *App) Init() {
 
 	// router
 	a.router = mux.NewRouter()
-	a.prepareStatic()
-	http.Handle("/", a.router)
 
 	// open pg connection
 	a.db.Init(a.Config)
@@ -53,6 +51,10 @@ func (a *App) StartJobs() {
 // ----------------------
 
 func (a *App) Listen() error {
+	a.prepareStatic()
+
+	http.Handle("/", a.router)
+
 	// Starts listening.
 	return http.ListenAndServe(a.Config.ListenAddr, nil)
 }
