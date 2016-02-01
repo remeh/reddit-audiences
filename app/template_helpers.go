@@ -1,8 +1,15 @@
-package web
+package app
 
 import (
+	"html/template"
 	"strings"
 )
+
+func TemplateHelpers() template.FuncMap {
+	return template.FuncMap{
+		"capitalize": Capitalize,
+	}
+}
 
 // Capitalize capitalizes the given string.
 func Capitalize(str string) string {

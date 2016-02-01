@@ -29,7 +29,9 @@ func (c Audiences) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	t = t.Funcs(app.TemplateHelpers())
+
 	t.Execute(w, audiencesBody{
-		Subreddit: Capitalize(subreddit),
+		Subreddit: subreddit,
 	})
 }

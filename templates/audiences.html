@@ -1,7 +1,29 @@
 {{template "header.html"}} 
   <div class="container">
     <div class="row">
-      <h1> {{ .Subreddit }} </h1>
+      <h1>/r/{{ capitalize .Subreddit }}</h1>
+    </div>
+    <div class="row">
+      <span id="class-content"></span>
     </div>
   </div>
+  <script type="text/javascript">
+    ready(function() {
+      var audiences = {};
+
+      audiences.get_data = function(subreddit) {
+        app.json('/api/today/' + subreddit, 'GET', this.on_receive_audience, this.on_error);
+      }
+
+      audiences.on_error = function(request) {
+        alert('Error while retrieving the data for this subreddit.');
+      }
+
+      audiences.on_receive_audience = function(xhr, data) {
+        console.log(data);
+      }
+
+      audiences.get_data('{{ .Subreddit }}');
+    });
+  </script>
 {{template "footer.html"}}

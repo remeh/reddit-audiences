@@ -19,8 +19,14 @@ func ReadTemplates(app *App) (*template.Template, error) {
 		return nil, fmt.Errorf("no templates available in %s", app.Config.TemplatesDir)
 	}
 
-	// look for templates
-	return template.ParseFiles(rv...)
+	// assign custom functions and parse templates.
+	t, err := template.New("").Funcs(TemplateHelpers()).ParseFiles(rv...)
+	if err != nil {
+		return nil, err
+	}
+
+	// attach method helpers
+	return t, nil
 }
 
 func lookForTemplates(path string) ([]string, error) {
