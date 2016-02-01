@@ -1,6 +1,6 @@
 // Reddit audiences crawler
 // Rémy Mathieu © 2016
-package main
+package api
 
 import (
 	"encoding/json"
@@ -8,11 +8,13 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/remeh/reddit-audiences/app"
+
 	"github.com/gorilla/mux"
 )
 
 type TodayHandler struct {
-	app *App
+	App *app.App
 }
 
 func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -41,11 +43,11 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (c TodayHandler) getData(subreddit string) ([]Audience, error) {
+func (c TodayHandler) getData(subreddit string) ([]app.Audience, error) {
 	var start, end time.Time
 
 	start = time.Date(end.Year(), end.Month(), end.Day(), 0, 0, 0, 0, end.Location())
 	end = time.Now()
 
-	return c.app.DB().FindAudiencesInterval(subreddit, start, end)
+	return c.App.DB().FindAudiencesInterval(subreddit, start, end)
 }

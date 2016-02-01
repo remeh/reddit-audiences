@@ -2,15 +2,29 @@
 // Rémy Mathieu © 2016
 package main
 
-func main() {
-	var app App
-	app.Init()
-	go app.StartJobs()
+import (
+	. "github.com/remeh/reddit-audiences/api"
+	"github.com/remeh/reddit-audiences/app"
+	"github.com/remeh/reddit-audiences/web"
+)
 
-	declareApiRoutes(&app)
-	app.Listen()
+func main() {
+	var a app.App
+	a.Init()
+	go a.StartJobs()
+
+	declareWebRoutes(&a)
+	declareApiRoutes(&a)
+	a.Listen()
 }
 
-func declareApiRoutes(a *App) {
+func declareWebRoutes(a *app.App) {
+	// Finally index
+	a.Add("/audiences/{subreddit}", web.Audiences{a})
+	a.Add("/index", web.Index{a})
+	a.Add("/", web.Index{a})
+}
+
+func declareApiRoutes(a *app.App) {
 	a.AddApi("/today/{subreddit}", LogRoute(a, TodayHandler{a}))
 }

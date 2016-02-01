@@ -1,14 +1,16 @@
 // Reddit audiences crawler
 // Rémy Mathieu © 2016
-package main
+package api
 
 import (
 	"log"
 	"net/http"
+
+	"github.com/remeh/reddit-audiences/app"
 )
 
 type LogAdapter struct {
-	app     *App
+	app     *app.App
 	handler http.Handler
 }
 
@@ -23,7 +25,7 @@ func (a LogAdapter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // LogRoute creates a route which will log the route access.
-func LogRoute(a *App, handler http.Handler) http.Handler {
+func LogRoute(a *app.App, handler http.Handler) http.Handler {
 	return LogAdapter{
 		app:     a,
 		handler: handler,

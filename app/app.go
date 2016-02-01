@@ -1,6 +1,6 @@
 // Reddit audiences crawler
 // Rémy Mathieu © 2016
-package main
+package app
 
 import (
 	"html/template"
@@ -15,7 +15,7 @@ import (
 type App struct {
 	db        Conn
 	router    *mux.Router
-	templates *template.Template
+	Templates *template.Template
 	Config    Config
 }
 
@@ -68,6 +68,10 @@ func (a *App) Listen() error {
 	return http.ListenAndServe(a.Config.ListenAddr, nil)
 }
 
+func (a *App) Add(pattern string, handler http.Handler) {
+	a.router.Handle(pattern, handler)
+}
+
 func (a *App) AddApi(pattern string, handler http.Handler) {
 	a.router.PathPrefix("/api").Subrouter().Handle(pattern, handler)
 }
@@ -85,7 +89,7 @@ func (a *App) initTemplates() error {
 		return err
 	}
 
-	a.templates = templates
+	a.Templates = templates
 	log.Println("info: using templates from the directory", a.Config.TemplatesDir)
 	return nil
 }

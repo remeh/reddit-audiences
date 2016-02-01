@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"fmt"
@@ -24,6 +24,10 @@ func ReadTemplates(app *App) (*template.Template, error) {
 }
 
 func lookForTemplates(path string) ([]string, error) {
+	if !strings.HasSuffix(path, "/") {
+		path += "/"
+	}
+
 	rv := make([]string, 0)
 
 	dir, err := os.Open(path)
@@ -51,7 +55,7 @@ func lookForTemplates(path string) ([]string, error) {
 		}
 
 		if strings.HasSuffix(fi.Name(), ".html") {
-			rv = append(rv, path+"/"+fi.Name())
+			rv = append(rv, path+fi.Name())
 		}
 	}
 

@@ -1,6 +1,6 @@
 // Reddit audiences crawler
 // Rémy Mathieu © 2016
-package main
+package app
 
 import (
 	"database/sql"
