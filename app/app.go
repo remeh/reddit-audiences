@@ -22,6 +22,7 @@ type App struct {
 type Config struct {
 	DB           string `envconfig:"DB,default=host=/var/run/postgresql sslmode=disable user=audiences dbname=audiences password=audiences"`
 	PublicDir    string `envconfig:"DIR,default=static/"`
+	Crawl        bool   `envconfig:"CRAWL,default=true`
 	TemplatesDir string `envconfig:"TEMPLATES,default=templates/"`
 	ListenAddr   string `envconfig:"ADDR,default=:9000"`
 }

@@ -17,13 +17,15 @@ const (
 )
 
 func StartCrawlingJob(a *App) {
-	log.Println("info: starts tracking job.")
-	ticker := time.NewTicker(time.Second * 30)
-	for range ticker.C {
-		log.Println("info: tracking job is running.")
-		Crawl(a)
+	if a.Config.Crawl {
+		log.Println("info: starts tracking job.")
+		ticker := time.NewTicker(time.Second * 30)
+		for range ticker.C {
+			log.Println("info: tracking job is running.")
+			Crawl(a)
+		}
+		ticker.Stop()
 	}
-	ticker.Stop()
 }
 
 // Crawl retrieves the audience of subreddits for which
