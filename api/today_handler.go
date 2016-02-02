@@ -4,11 +4,11 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
 
+	"github.com/remeh/reddit-audiences/api/object"
 	"github.com/remeh/reddit-audiences/app"
 
 	"github.com/gorilla/mux"
@@ -34,7 +34,9 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	buff, err := json.Marshal(data)
+	audiences := object.AudiencesFromApp(data)
+
+	buff, err := json.Marshal(audiences)
 	if err != nil {
 		log.Println("err:", err.Error())
 		w.WriteHeader(500)

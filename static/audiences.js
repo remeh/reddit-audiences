@@ -16,8 +16,8 @@ ready(function() {
 
     for (var i = 0; i < data.length; i++) {
       graph_data.push({
-        x: new Date(data[i].CrawlTime).getTime(),
-        y: data[i].Audience,
+        x: new Date(data[i].crawl_time).getTime(),
+        y: data[i].audience,
       });
     }
 
