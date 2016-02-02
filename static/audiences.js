@@ -45,7 +45,7 @@ ready(function() {
       });
 
       chart.xAxis
-        .tickPadding(50)
+        .tickPadding(15)
         .tickFormat(function(d) {
           console.log(d);
           return d3.time.format('%x %H:%M')(new Date(d))

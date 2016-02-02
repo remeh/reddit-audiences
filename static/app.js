@@ -35,12 +35,13 @@ function onReady() {
       return '';
     }
 
-    var el = document.querySelector("app-data");
+    var el = document.querySelector('#app-data');
+    console.log(el);
     if (!el) {
       return '';
     }
 
-    var res = el.getAttribute(field);
+    var res = el.getAttribute('data-'+field);
 
     // avoid undefined
     if (!res) {
