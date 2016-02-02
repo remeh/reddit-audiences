@@ -1,5 +1,5 @@
 {{template "header.html"}} 
-  <div class="container main-container">
+  <div class="index container main-container">
     <div class="jumbotron">
       <h1>Follow Reddit audience</h1>
       <p>Enter a Subreddits for which you want to follow the audience.</p>
@@ -10,6 +10,11 @@
               <input type="text" id="subreddit" onkeyup="app.index.onKeyup(event);" class="form-control" placeholder="Subreddit">
               <span class="input-group-btn">
                 <button id="go" onclick="app.index.go();" class="btn btn-primary" type="button">Go!</button>
+              </span>
+            </div>
+            <div class="advices">
+              <span class="pull-center">
+                Example: <a href="/audiences/android" alt="See Android live audience">Android</a>, <a href="/audiences/news" alt="See /r/news live audience">News</a>, ...
               </span>
             </div>
           </div>

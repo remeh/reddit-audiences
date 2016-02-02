@@ -39,3 +39,8 @@ div.main-container {
 .jumbotron h1, .jumbotron p {
   text-align: center;
 }
+
+.index div.advices {
+  margin-top: 4px;
+  text-align: center;
+}
