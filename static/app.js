@@ -30,6 +30,26 @@ function onReady() {
       request.send();
   }
 
+  app.data = function(field) {
+    if (!field) {
+      return '';
+    }
+
+    var el = document.querySelector("app-data");
+    if (!el) {
+      return '';
+    }
+
+    var res = el.getAttribute(field);
+
+    // avoid undefined
+    if (!res) {
+      return '';
+    }
+
+    return res;
+  }
+
   window.app = app;
 }
 
