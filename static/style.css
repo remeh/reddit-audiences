@@ -14,7 +14,7 @@ header .nav {
   padding-top: 0px;
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 992px) {
   header {
     text-align: center;
   }
@@ -54,7 +54,7 @@ div.main-container {
   font-weight: bold;
 }
 
-@media screen and (min-width: 480px) {
+@media screen and (min-width: 992px) {
   .info-label {
     text-align: right;
     padding-right: 2em;
@@ -65,7 +65,7 @@ div.main-container {
   }
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 992px) {
   .info-label {
     text-align: center;
     font-size: 1.4em;
