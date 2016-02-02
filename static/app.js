@@ -35,7 +35,7 @@ function onReady() {
       return '';
     }
 
-    var el = document.querySelector('#app-data');
+    var el = document.getElementById('app-data');
     console.log(el);
     if (!el) {
       return '';

@@ -5,11 +5,11 @@ ready(function() {
 
   audiences.draw = function(subreddit) {
     app.json('/api/today/' + subreddit, 'GET', this.on_receive_audience, this.on_error);
-  }
+  };
 
   audiences.on_error = function(request) {
     alert('Error while retrieving the data for this subreddit.');
-  }
+  };
 
   audiences.on_receive_audience = function(xhr, data) {
     var graph_data = [];
@@ -25,13 +25,13 @@ ready(function() {
     {
         area: true,
         values: graph_data,
-        key: "Audience",
+        key: subreddit,
         color: "#ff7f0e",
-        strokeWidth: 4,
+        strokeWidth: 2,
     }];
 
     audiences.draw_graph(line_data);
-  }
+  };
 
   audiences.draw_graph = function(data) {
     nv.addGraph(function() {
@@ -47,13 +47,12 @@ ready(function() {
       chart.xAxis
         .tickPadding(15)
         .tickFormat(function(d) {
-          console.log(d);
           return d3.time.format('%x %H:%M')(new Date(d))
       }).showMaxMin(true);
 
       chart.yAxis
           .axisLabel(subreddit)
-          .tickFormat(d3.format('.02f'));
+          .tickFormat(d3.format('i'));
 
       d3.select('#chart').append('svg')
           .datum(data)
@@ -63,7 +62,10 @@ ready(function() {
       nv.utils.windowResize(function() { chart.update(); });
       return chart;
     });
-  }
+  };
+
+  // attach to the app.
+  app.audiences = audiences;
 
   // retrieves and display the data
   audiences.draw(subreddit);
