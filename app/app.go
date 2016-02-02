@@ -22,14 +22,14 @@ type App struct {
 type Config struct {
 	DB           string `envconfig:"DB,default=host=/var/run/postgresql sslmode=disable user=audiences dbname=audiences password=audiences"`
 	PublicDir    string `envconfig:"DIR,default=static/"`
-	Crawl        bool   `envconfig:"optional,default=true,CRAWL`
+	Crawl        bool   `envconfig:"optional,default=true,CRAWL"`
 	TemplatesDir string `envconfig:"TEMPLATES,default=templates/"`
 	ListenAddr   string `envconfig:"ADDR,default=:9000"`
 }
 
 func (a *App) Init() {
 	// init
-	err := envconfig.InitWithOptions(&a.Config, envconfig.Options{AllOptional: true})
+	err := envconfig.Init(&a.Config)
 	if err != nil {
 		log.Println("err: on config reading:", err.Error())
 		os.Exit(1)
