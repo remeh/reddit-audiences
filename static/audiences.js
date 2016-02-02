@@ -14,10 +14,12 @@ ready(function() {
   audiences.on_receive_audience = function(xhr, data) {
     var graph_data = [];
 
-    for (var i = 0; i < data.length; i++) {
+    var values = data.audiences;
+
+    for (var i = 0; i < values.length; i++) {
       graph_data.push({
-        x: new Date(data[i].crawl_time).getTime(),
-        y: data[i].audience,
+        x: new Date(values[i].crawl_time).getTime(),
+        y: values[i].audience,
       });
     }
 
@@ -31,6 +33,18 @@ ready(function() {
     }];
 
     audiences.draw_graph(line_data);
+    audiences.update_labels(data);
+  };
+
+  audiences.update_labels = function(data) {
+    var average = 'data unavailable';
+    if (data) {
+      if (data.average) {
+        average = data.average;
+      }
+    }
+
+    document.getElementById('average').innerHTML = average;
   };
 
   audiences.draw_graph = function(data) {

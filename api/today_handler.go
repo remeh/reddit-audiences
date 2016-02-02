@@ -18,6 +18,11 @@ type TodayHandler struct {
 	App *app.App
 }
 
+type todayHandlerResp struct {
+	Audiences []object.Audience `json:"audiences"`
+	Average   int64             `json:"average"`
+}
+
 func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -36,7 +41,10 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	audiences := object.AudiencesFromApp(data)
 
-	buff, err := json.Marshal(audiences)
+	buff, err := json.Marshal(todayHandlerResp{
+		Audiences: audiences,
+		Average:   app.Average(data),
+	})
 	if err != nil {
 		log.Println("err:", err.Error())
 		w.WriteHeader(500)
