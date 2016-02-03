@@ -103,7 +103,7 @@ func (c Conn) FindAudiencesInterval(subreddit string, start, end time.Time) ([]A
 	defer r.Close()
 
 	for r.Next() {
-		var audience int
+		var audience int64
 		var crawlTime time.Time
 
 		if err := r.Scan(&audience, &crawlTime); err != nil {

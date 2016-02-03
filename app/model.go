@@ -6,6 +6,6 @@ import (
 
 type Audience struct {
 	Subreddit string
-	Audience  int
+	Audience  int64
 	CrawlTime time.Time
 }

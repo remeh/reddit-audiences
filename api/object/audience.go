@@ -8,7 +8,7 @@ import (
 
 type Audience struct {
 	CrawlTime time.Time `json:"crawl_time"`
-	Audience  int       `json:"audience"`
+	Audience  int64     `json:"audience"`
 }
 
 func AudiencesFromApp(audiences []app.Audience) []Audience {
