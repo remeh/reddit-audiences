@@ -37,14 +37,28 @@ ready(function() {
   };
 
   audiences.update_labels = function(data) {
-    var average = 'data unavailable';
+    var average = 'data unavailable.';
+    var highest = 'data unavailable.';
+    var lowest = 'data unavailable.';
+
     if (data) {
       if (data.average) {
         average = data.average;
       }
+
+      if (data.highest_audience) {
+        highest = '' + data.highest_audience.audience + ' at ' + new Date(data.highest_audience.crawl_time);
+      }
+
+      if (data.lowest_audience) {
+        lowest = '' + data.lowest_audience.audience + ' at ' + new Date(data.lowest_audience.crawl_time);
+      }
     }
 
+
     document.getElementById('average').innerHTML = average;
+    document.getElementById('lowest').innerHTML = lowest;
+    document.getElementById('highest').innerHTML = highest;
   };
 
   audiences.draw_graph = function(data) {
