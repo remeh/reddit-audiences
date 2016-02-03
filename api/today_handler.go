@@ -42,10 +42,13 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	audiences := object.AudiencesFromApp(data)
+	lowest, highest := app.LowestHighest(data)
 
 	buff, err := json.Marshal(todayHandlerResp{
-		Audiences: audiences,
-		Average:   app.Average(data),
+		Audiences:       audiences,
+		Average:         app.Average(data),
+		LowestAudience:  object.AudienceFromApp(lowest),
+		HighestAudience: object.AudienceFromApp(highest),
 	})
 	if err != nil {
 		log.Println("err:", err.Error())
@@ -54,31 +57,6 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write(buff)
 
-}
-
-// lowestHighest is a quick implementation retrieving the
-// lowest and the highest audience for today.
-func (c TodayHandler) lowestHighest(audiences []app.Audience) (app.Audience, app.Audience) {
-	var lowest, highest app.Audience
-	lowest.Audience = 10E10
-
-	for _, a := range audiences {
-		if a.Audience > highest.Audience {
-			highest = a
-			continue
-		}
-
-		if a.Audience < lowest.Audience {
-			lowest = a
-			continue
-		}
-	}
-
-	if lowest.Audience == 10E10 {
-		lowest.Audience = 0
-	}
-
-	return lowest, highest
 }
 
 func (c TodayHandler) getData(subreddit string) ([]app.Audience, error) {
