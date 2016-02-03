@@ -47,11 +47,11 @@ ready(function() {
       }
 
       if (data.highest_audience) {
-        highest = '' + data.highest_audience.audience + ' at ' + new Date(data.highest_audience.crawl_time);
+        highest = '' + data.highest_audience.audience + ' at ' + moment(new Date(data.highest_audience.crawl_time)).format('HH:mm a');
       }
 
       if (data.lowest_audience) {
-        lowest = '' + data.lowest_audience.audience + ' at ' + new Date(data.lowest_audience.crawl_time);
+        lowest = '' + data.lowest_audience.audience + ' at ' + moment(new Date(data.lowest_audience.crawl_time)).format('HH:mm a');
       }
     }
 
@@ -65,7 +65,7 @@ ready(function() {
     nv.addGraph(function() {
       var chart = nv.models.lineChart()
                     .options({
-                      useInteractiveGuideline: true,
+                      //useInteractiveGuideline: true,
                       transitionDuration: 350,
                       showLegend: true,
                       showYAxis: true,

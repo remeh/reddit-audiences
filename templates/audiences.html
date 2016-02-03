@@ -1,5 +1,5 @@
 {{template "header.html"}} 
-  <div class="container" id="app-data" data-subreddit="{{.Subreddit }}">
+  <div class="audiences container" id="app-data" data-subreddit="{{.Subreddit }}">
     <div class="row">
       <h1>/r/{{ capitalize .Subreddit }}</h1>
     </div>
@@ -7,29 +7,29 @@
       <div id="chart">
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-6 info-label">
-        Average users connected today
+    <div class="row info">
+          <div class="col-lg-6 info-label">
+            Average users connected today
+          </div>
+          <div class="col-lg-6 info-value">
+            <i class="fa fa-users info-icons"></i><span class="info-value" id="average"></span>
+          </div>
       </div>
-      <div class="col-md-6 info-value">
-        <span class="info-value" id="average"></span>
+      <div class="row info">
+          <div class="col-lg-6 info-label">
+            Highest audience
+          </div>
+          <div class="col-lg-6 info-value">
+            <i class="fa fa-long-arrow-up info-icons"></i><span class="info-value" id="highest"></span>
+          </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6 info-label">
-        Highest audience
-      </div>
-      <div class="col-md-6 info-value">
-        <span class="info-value" id="highest"></span>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-6 info-label">
-        Lowest audience
-      </div>
-      <div class="col-md-6 info-value">
-        <span class="info-value" id="lowest"></span>
-      </div>
+      <div class="row info">
+          <div class="col-lg-6 info-label">
+            Lowest audience
+          </div>
+          <div class="col-lg-6 info-value">
+            <i class="fa fa-long-arrow-down info-icons"></i> <span class="info-value" id="lowest"></span>
+          </div>
     </div>
   </div>
   <script type="text/javascript" src="/audiences.js"></script>

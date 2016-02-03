@@ -36,6 +36,8 @@ div.main-container {
   margin-top: 2em;
 }
 
+/* index */
+
 .jumbotron h1, .jumbotron p {
   text-align: center;
 }
@@ -45,34 +47,44 @@ div.main-container {
   text-align: center;
 }
 
-.info-label {
+/* audiencse */
+
+.audiences .info-label {
   font-size: 1.2em;
 }
 
-.info-value {
+.audiences .info-value {
   font-size: 1.2em;
   font-weight: bold;
 }
 
 @media screen and (min-width: 992px) {
-  .info-label {
+  .audiences .info-label {
     text-align: right;
     padding-right: 2em;
   }
 
-  .info-value {
-    padding-left: 3em;
+  .audiences .info-value {
   }
 }
 
 @media screen and (max-width: 992px) {
-  .info-label {
+  .audiences .info-label {
     text-align: center;
     font-size: 1.4em;
   }
 
-  .info-value {
+  .audiences .info-value {
     text-align: center;
     font-size: 1.4em;
   }
+}
+
+.audiences .info {
+  min-height: 3em;
+}
+
+.audiences .info-icons {
+  font-size: 1.5em;
+  margin-right: 1em;
 }
