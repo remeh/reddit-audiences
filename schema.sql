@@ -8,6 +8,9 @@ GRANT ALL ON DATABASE "audiences" TO "audiences";
 set role "audiences";
 
 -- Tables
+
+-- subreddit
+
 CREATE TABLE "subreddit" (
     "name" TEXT default '',
     "creation_time" TIMESTAMP WITH TIME ZONE,
@@ -19,10 +22,13 @@ CREATE INDEX ON "subreddit" ("last_crawl");
 
 CREATE UNIQUE INDEX ON "subreddit" ("name");
 
+-- audience
+
 CREATE TABLE "audience" (
     "subreddit" TEXT default '',
     "crawl_time" TIMESTAMP WITH TIME ZONE,
-    "audience" INT
+    "audience" INT DEFAULT 0
+    "subscribers" INT DEFAULT 0
 );
 
 CREATE UNIQUE INDEX ON "audience" ("subreddit", "crawl_time");

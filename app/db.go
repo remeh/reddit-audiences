@@ -25,9 +25,9 @@ const (
 	`
 	INSERT_SUBREDDIT_AUDIENCE = `
 		INSERT INTO "audience"
-		(subreddit, crawl_time, audience)
+		(subreddit, crawl_time, audience, subscribers)
 		VALUES
-		($1, $2, $3)
+		($1, $2, $3, $4)
 	`
 	UPDATE_LAST_CRAWL_TIME = `
 		UPDATE "subreddit"
@@ -122,9 +122,9 @@ func (c Conn) FindAudiencesInterval(subreddit string, start, end time.Time) ([]A
 	return rv, nil
 }
 
-// InsertSubredditValue writes an audience value for the given subreddit
+// InsertAudienceValue writes an audience value for the given subreddit
 // and updates the last crawl time of the subreddit.
-func (c Conn) InsertSubredditValue(subreddit string, value int) error {
+func (c Conn) InsertAudienceValue(subreddit string, audience, subscribers int64) error {
 	tx, err := c.db.Begin()
 	if err != nil {
 		return err
@@ -136,7 +136,7 @@ func (c Conn) InsertSubredditValue(subreddit string, value int) error {
 
 	// write the value
 
-	_, err = tx.Exec(INSERT_SUBREDDIT_AUDIENCE, subreddit, now, value)
+	_, err = tx.Exec(INSERT_SUBREDDIT_AUDIENCE, subreddit, now, audience, subscribers)
 	if err != nil {
 		return err
 	}

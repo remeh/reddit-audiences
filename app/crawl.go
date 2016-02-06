@@ -5,6 +5,7 @@ package app
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -43,12 +44,12 @@ func Crawl(a *App) {
 	for _, subreddit := range subreddits {
 		log.Println("info: crawling", subreddit)
 		go func(subreddit string) {
-			if audience, err := GetAudience(subreddit); err == nil {
+			if audience, subscribers, err := GetAudience(subreddit); err == nil {
 				// store the value and update the last crawl time
-				if err := a.DB().InsertSubredditValue(subreddit, audience); err != nil {
+				if err := a.DB().InsertAudienceValue(subreddit, audience, subscribers); err != nil {
 					log.Println("err:", err.Error())
 				} else {
-					log.Printf("info: subreddit %s has %d active users\n", subreddit, audience)
+					log.Printf("info: subreddit %s has %d active users (%d subscribers)\n", subreddit, audience, subscribers)
 				}
 			} else if err != nil {
 				log.Println("err:", err.Error())
@@ -59,33 +60,83 @@ func Crawl(a *App) {
 
 // GetAudience gets the subreddit page on reddit
 // and gets the current audience of this subreddit in the DOM.
-func GetAudience(subreddit string) (int, error) {
-	var audience int
+// NOTE(remy): we stop as soon as we have a DOM error because
+// it has great chances that the full DOM is corrupted/not retrieved.
+func GetAudience(subreddit string) (int64, int64, error) {
+	var audience int64
+	var subscribers int64
 	var err error
 
-	doc, err := goquery.NewDocument(REDDIT_SUBREDDIT_URL + subreddit)
+	doc, err := getSubredditPage(REDDIT_SUBREDDIT_URL + subreddit)
 	if err != nil {
-		return 0, err
+		return 0, 0, fmt.Errorf("while crawling %s: %s", subreddit, err.Error())
 	}
+
+	// audience
+	// ----------------------
 
 	s := doc.Find("p.users-online span.number").First()
 
-	// it looks like we found a value in the dom
 	value := s.Text()
-	if len(value) == 0 {
-		return 0, fmt.Errorf("can't retrieve subreddit %s audience: no text value in the dom node.", subreddit)
+	if len(value) != 0 {
+		return 0, 0, fmt.Errorf("can't retrieve subreddit %s audience: no text value in the dom node.", subreddit)
 	}
 
+	if audience, err = cleanInt(value); err != nil {
+		return 0, 0, err
+	}
+
+	// subscribers
+	// ----------------------
+
+	s = doc.Find("span.subscribers span.number").First()
+
+	value = s.Text()
+	if len(value) == 0 {
+		return 0, 0, fmt.Errorf("can't retrieve subreddit %s subscribers: no text value in the dom node.", subreddit)
+	}
+
+	if subscribers, err = cleanInt(value); err != nil {
+		return 0, 0, err
+	}
+
+	return audience, subscribers, err
+}
+
+func getSubredditPage(url string) (*goquery.Document, error) {
+	// TODO(remy): create a pool of clients and use it
+	client := http.Client{}
+
+	r, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO(remy)
+	r.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:42.0) Gecko/20100101 Firefox/42.0")
+
+	resp, err := client.Do(r)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf(resp.Status)
+	}
+
+	return goquery.NewDocumentFromResponse(resp)
+}
+
+func cleanInt(str string) (int64, error) {
 	// sometimes it starts with ~
-	if strings.HasPrefix(value, "~") {
-		value = value[1:]
+	if strings.HasPrefix(str, "~") {
+		str = str[1:]
 	}
 	// , for thousands etc.
-	value = strings.Replace(value, ",", "", -1)
+	str = strings.Replace(str, ",", "", -1)
 	// finally trim
-	value = strings.Trim(value, " ")
+	str = strings.Trim(str, " ")
 
-	audience, err = strconv.Atoi(value)
-
-	return audience, err
+	return strconv.ParseInt(str, 10, 64)
 }
