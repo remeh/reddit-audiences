@@ -29,6 +29,22 @@ const (
 		VALUES
 		($1, $2, $3, $4)
 	`
+	INSERT_ARTICLE = `
+		INSERT INTO "article"
+		(subreddit, article_id, article_title, position, crawl_time, promoted)
+		VALUES
+		($1, $2, $3, $4, $5 $6)
+	`
+	LAST_ARTICLE_STATE = `
+		SELECT "article_id", "position"
+		FROM "article"
+		WHERE
+			"subreddit" = $1
+			AND
+			"article_id" = $2
+		ORDER BY crawl_time DESC
+		LIMIT 1
+	`
 	UPDATE_LAST_CRAWL_TIME = `
 		UPDATE "subreddit"
 		SET
@@ -56,6 +72,38 @@ func (c *Conn) Init(config Config) error {
 
 	c.db = dbase
 	return c.db.Ping()
+}
+
+// FindArticleLastState returns for the given subreddit and
+// article ID the article ID (if found) and its position.
+// If the returned article ID is empty, it means that the
+// article hasn't been inserted in the DB yet.
+func (c Conn) FindArticleLastState(subreddit, articleId string) (string, int, error) {
+	var id string
+	var pos int
+
+	r, err := c.db.Query(LAST_ARTICLE_STATE, subreddit, articleId)
+	if err != nil {
+		return "", 0, err
+	}
+
+	if r == nil {
+		return "", 0, nil
+	}
+
+	defer r.Close()
+
+	if r.Next() {
+		if err := r.Scan(&id, &pos); err != nil {
+			return "", 0, err
+		}
+	}
+
+	return id, pos, nil
+}
+
+func (c Conn) InsertArticle(article Article) (int, error) {
+	return c.db.Exec(INSERT_ARTICLE, article.Subreddit, article.ArticleId, article.ArticleTitle, article.Position, article.CrawlTime, article.Promoted)
 }
 
 // GetSubredditsToCrawl returns the subreddits which must be

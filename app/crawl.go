@@ -119,6 +119,13 @@ func GetAudience(subreddit string) (int64, int64, error) {
 		return 0, 0, err
 	}
 
+	// articles
+	// ----------------------
+
+	s = doc.Find("p.title a.title").Each(func(i int, article *goquery.Selection) {
+		println(article.Text())
+	})
+
 	return audience, subscribers, err
 }
 

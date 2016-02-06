@@ -33,3 +33,16 @@ CREATE TABLE "audience" (
 
 CREATE UNIQUE INDEX ON "audience" ("subreddit", "crawl_time");
 CREATE INDEX ON "audience" ("subreddit", "crawl_time");
+
+-- article
+
+CREATE TABLE "article" (
+    "subreddit" TEXT DEFAULT '', -- foreign key to subreddit
+    "article_id" TEXT DEFAULT '', -- reddit article id
+    "article_title" TEXT DEFAULT '',
+    "position" INT DEFAULT 0,
+    "crawl_time" TIMESTAMP WITH TIME ZONE,
+    "promoted" BOOLEAN DEFAULT false
+);
+
+CREATE UNIQUE INDEX ON "article" ("subreddit", "article_id");

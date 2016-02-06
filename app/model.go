@@ -10,3 +10,12 @@ type Audience struct {
 	Subscribers int64
 	CrawlTime   time.Time
 }
+
+type Article struct {
+	Subreddit    string
+	ArticleId    string
+	ArticleTitle string
+	Position     int
+	CrawlTime    time.Time
+	Promoted     bool
+}
