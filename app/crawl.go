@@ -1,5 +1,6 @@
 // Reddit audiences crawler
 // Rémy Mathieu © 2016
+
 package app
 
 import (
@@ -14,24 +15,53 @@ import (
 )
 
 const (
-	REDDIT_SUBREDDIT_URL = "https://reddit.com/r/"
+	REDDIT_SUBREDDIT_URL       = "https://reddit.com/r/"
+	SECONDS_BETWEEN_EACH_CRAWL = 10
 )
 
+var subredditsToCrawl chan string
+
 func StartCrawlingJob(a *App) {
+	subredditsToCrawl = make(chan string)
+
+	// starts the worker
+	go Worker(a)
+
+	// starts the main loop
+	// regularly feeding the worker.
 	if a.Config.Crawl {
-		log.Println("info: starts tracking job.")
+		log.Println("info: starts crawling job.")
 		ticker := time.NewTicker(time.Second * 30)
 		for range ticker.C {
-			log.Println("info: tracking job is running.")
-			Crawl(a)
+			log.Println("info: crawling job is running.")
+			Feeder(a)
 		}
 		ticker.Stop()
 	}
 }
 
-// Crawl retrieves the audience of subreddits for which
+// Worker is the routine dealing with the HTTP
+// call + reading hte DOM.
+func Worker(a *App) {
+	for subreddit := range subredditsToCrawl {
+		if audience, subscribers, err := GetAudience(subreddit); err == nil {
+			// store the value and update the last crawl time
+			if err := a.DB().InsertAudienceValue(subreddit, audience, subscribers); err != nil {
+				log.Println("err:", err.Error())
+			} else {
+				log.Printf("info: subreddit %s has %d active users (%d subscribers)\n", subreddit, audience, subscribers)
+			}
+		} else if err != nil {
+			log.Println("err:", err.Error())
+		}
+
+		time.Sleep(SECONDS_BETWEEN_EACH_CRAWL * time.Second) // wait a bit before the next crawl
+	}
+}
+
+// Feeder retrieves the audience of subreddits for which
 // the last crawl time is more than some minutes.
-func Crawl(a *App) {
+func Feeder(a *App) {
 	// crawl each subreddit each 5 minutes
 	five := time.Minute * 5
 	t := time.Now().Add(-five)
@@ -43,18 +73,7 @@ func Crawl(a *App) {
 
 	for _, subreddit := range subreddits {
 		log.Println("info: crawling", subreddit)
-		go func(subreddit string) {
-			if audience, subscribers, err := GetAudience(subreddit); err == nil {
-				// store the value and update the last crawl time
-				if err := a.DB().InsertAudienceValue(subreddit, audience, subscribers); err != nil {
-					log.Println("err:", err.Error())
-				} else {
-					log.Printf("info: subreddit %s has %d active users (%d subscribers)\n", subreddit, audience, subscribers)
-				}
-			} else if err != nil {
-				log.Println("err:", err.Error())
-			}
-		}(subreddit)
+		subredditsToCrawl <- subreddit
 	}
 }
 
