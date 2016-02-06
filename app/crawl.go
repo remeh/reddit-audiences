@@ -78,7 +78,7 @@ func GetAudience(subreddit string) (int64, int64, error) {
 	s := doc.Find("p.users-online span.number").First()
 
 	value := s.Text()
-	if len(value) != 0 {
+	if len(value) == 0 {
 		return 0, 0, fmt.Errorf("can't retrieve subreddit %s audience: no text value in the dom node.", subreddit)
 	}
 
@@ -104,17 +104,12 @@ func GetAudience(subreddit string) (int64, int64, error) {
 }
 
 func getSubredditPage(url string) (*goquery.Document, error) {
-	// TODO(remy): create a pool of clients and use it
-	client := http.Client{}
-
-	r, err := http.NewRequest("GET", url, nil)
+	r, err := NewRequest(url)
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO(remy)
-	r.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:42.0) Gecko/20100101 Firefox/42.0")
-
+	client := http.Client{}
 	resp, err := client.Do(r)
 
 	if err != nil {
