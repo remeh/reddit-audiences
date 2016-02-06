@@ -16,7 +16,7 @@ import (
 
 const (
 	REDDIT_SUBREDDIT_URL       = "https://reddit.com/r/"
-	SECONDS_BETWEEN_EACH_CRAWL = 10
+	SECONDS_BETWEEN_EACH_CRAWL = 1
 )
 
 var subredditsToCrawl chan string
