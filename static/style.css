@@ -99,7 +99,13 @@ div.main-container {
 }
 
 .audiences .article {
-  padding: 1.0em;
+  padding: 1.2em;
+  padding-bottom: 2.5em;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.audiences .article:hover {
+  background-color: white;
 }
 
 .audiences .icon-rising {
