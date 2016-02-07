@@ -44,12 +44,19 @@ func StartCrawlingJob(a *App) {
 // call + reading hte DOM.
 func Worker(a *App) {
 	for subreddit := range subredditsToCrawl {
-		if audience, subscribers, err := GetAudience(subreddit); err == nil {
-			// store the value and update the last crawl time
+		if audience, subscribers, articles, err := readDOMData(subreddit); err == nil {
+			// store the audience+subscribers and update the last crawl time
+			// ----------------------
 			if err := a.DB().InsertAudienceValue(subreddit, audience, subscribers); err != nil {
 				log.Println("err:", err.Error())
 			} else {
 				log.Printf("info: subreddit %s has %d active users (%d subscribers)\n", subreddit, audience, subscribers)
+			}
+
+			// store each articles if not already present at this rank
+			// ----------------------
+			if err := storeArticles(a, articles); err != nil {
+				log.Printf("err: %s", err.Error())
 			}
 		} else if err != nil {
 			log.Println("err:", err.Error())
@@ -77,18 +84,19 @@ func Feeder(a *App) {
 	}
 }
 
-// GetAudience gets the subreddit page on reddit
-// and gets the current audience of this subreddit in the DOM.
+// readDOMData gets the subreddit page on reddit
+// and gets the current audience, the subscribers and
+// the article infos from the DOM.
 // NOTE(remy): we stop as soon as we have a DOM error because
 // it has great chances that the full DOM is corrupted/not retrieved.
-func GetAudience(subreddit string) (int64, int64, error) {
+func readDOMData(subreddit string) (int64, int64, []Article, error) {
 	var audience int64
 	var subscribers int64
 	var err error
 
 	doc, err := getSubredditPage(REDDIT_SUBREDDIT_URL + subreddit)
 	if err != nil {
-		return 0, 0, fmt.Errorf("while crawling %s: %s", subreddit, err.Error())
+		return 0, 0, nil, fmt.Errorf("while crawling %s: %s", subreddit, err.Error())
 	}
 
 	// audience
@@ -98,11 +106,11 @@ func GetAudience(subreddit string) (int64, int64, error) {
 
 	value := s.Text()
 	if len(value) == 0 {
-		return 0, 0, fmt.Errorf("can't retrieve subreddit %s audience: no text value in the dom node.", subreddit)
+		return 0, 0, nil, fmt.Errorf("can't retrieve subreddit %s audience: no text value in the dom node.", subreddit)
 	}
 
 	if audience, err = cleanInt(value); err != nil {
-		return 0, 0, err
+		return 0, 0, nil, err
 	}
 
 	// subscribers
@@ -112,21 +120,82 @@ func GetAudience(subreddit string) (int64, int64, error) {
 
 	value = s.Text()
 	if len(value) == 0 {
-		return 0, 0, fmt.Errorf("can't retrieve subreddit %s subscribers: no text value in the dom node.", subreddit)
+		return 0, 0, nil, fmt.Errorf("can't retrieve subreddit %s subscribers: no text value in the dom node.", subreddit)
 	}
 
 	if subscribers, err = cleanInt(value); err != nil {
-		return 0, 0, err
+		return 0, 0, nil, err
 	}
 
 	// articles
 	// ----------------------
 
-	s = doc.Find("p.title a.title").Each(func(i int, article *goquery.Selection) {
-		println(article.Text())
+	now := time.Now()
+	articles := make([]Article, 0)
+	s = doc.Find(".link").Each(func(i int, selec *goquery.Selection) {
+		title := selec.Find("p.title a.title").First()
+		strPos := selec.ChildrenFiltered(".rank").First()
+		articleId, _ := selec.Attr("data-fullname")
+		author, _ := selec.Attr("data-author")
+
+		rank, err := strconv.Atoi(strPos.Text())
+		if err != nil {
+			rank = 0 // it's probably a promoted or stickied article
+		}
+
+		promoted := false
+		if selec.HasClass("promoted") {
+			promoted = true
+		}
+
+		sticky := false
+		if selec.HasClass("stickied") {
+			sticky = true
+		}
+
+		// TODO(remy):remove the t[1-3]_ from the article id
+
+		articles = append(articles, Article{
+			Subreddit:    subreddit,
+			ArticleId:    articleId,
+			ArticleTitle: title.Text(),
+			Author:       author,
+			Rank:         rank,
+			CrawlTime:    now,
+			Promoted:     promoted,
+			Sticky:       sticky,
+		})
 	})
 
-	return audience, subscribers, err
+	return audience, subscribers, articles, err
+}
+
+// storeArticles checks for each article if the
+// info isn't already present in database, if not,
+// it stores it. If changed, it also stores it.
+func storeArticles(a *App, articles []Article) error {
+	if len(articles) == 0 {
+		return nil
+	}
+
+	for _, article := range articles {
+		id, rank, err := a.DB().FindArticleLastState(article.Subreddit, article.ArticleId)
+		if err != nil {
+			return fmt.Errorf("while retrieving article last state: %s", err.Error())
+		}
+
+		// already stored at this rank
+		if article.ArticleId == id && rank == article.Rank {
+			continue
+		}
+
+		// not already store, do it now
+		if _, err := a.DB().InsertArticle(article); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func getSubredditPage(url string) (*goquery.Document, error) {

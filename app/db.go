@@ -31,12 +31,12 @@ const (
 	`
 	INSERT_ARTICLE = `
 		INSERT INTO "article"
-		(subreddit, article_id, article_title, position, crawl_time, promoted)
+		(subreddit, article_id, article_title, article_link, author, rank, crawl_time, promoted, sticky)
 		VALUES
-		($1, $2, $3, $4, $5 $6)
+		($1, $2, $3, $4, $5, $6, $7, $8, $9)
 	`
 	LAST_ARTICLE_STATE = `
-		SELECT "article_id", "position"
+		SELECT "article_id", "rank"
 		FROM "article"
 		WHERE
 			"subreddit" = $1
@@ -75,12 +75,12 @@ func (c *Conn) Init(config Config) error {
 }
 
 // FindArticleLastState returns for the given subreddit and
-// article ID the article ID (if found) and its position.
+// article ID the article ID (if found) and its rank.
 // If the returned article ID is empty, it means that the
 // article hasn't been inserted in the DB yet.
 func (c Conn) FindArticleLastState(subreddit, articleId string) (string, int, error) {
 	var id string
-	var pos int
+	var rank int
 
 	r, err := c.db.Query(LAST_ARTICLE_STATE, subreddit, articleId)
 	if err != nil {
@@ -94,16 +94,16 @@ func (c Conn) FindArticleLastState(subreddit, articleId string) (string, int, er
 	defer r.Close()
 
 	if r.Next() {
-		if err := r.Scan(&id, &pos); err != nil {
+		if err := r.Scan(&id, &rank); err != nil {
 			return "", 0, err
 		}
 	}
 
-	return id, pos, nil
+	return id, rank, nil
 }
 
-func (c Conn) InsertArticle(article Article) (int, error) {
-	return c.db.Exec(INSERT_ARTICLE, article.Subreddit, article.ArticleId, article.ArticleTitle, article.Position, article.CrawlTime, article.Promoted)
+func (c Conn) InsertArticle(article Article) (sql.Result, error) {
+	return c.db.Exec(INSERT_ARTICLE, article.Subreddit, article.ArticleId, article.ArticleTitle, article.ArticleLink, article.Author, article.Rank, article.CrawlTime, article.Promoted, article.Sticky)
 }
 
 // GetSubredditsToCrawl returns the subreddits which must be

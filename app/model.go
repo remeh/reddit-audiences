@@ -15,7 +15,10 @@ type Article struct {
 	Subreddit    string
 	ArticleId    string
 	ArticleTitle string
-	Position     int
+	ArticleLink  string
+	Author       string
+	Rank         int
 	CrawlTime    time.Time
 	Promoted     bool
+	Sticky       bool
 }
