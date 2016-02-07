@@ -140,6 +140,10 @@ func readDOMData(subreddit string) (int64, int64, []Article, error) {
 		articleId, _ := selec.Attr("data-fullname")
 		author, _ := selec.Attr("data-author")
 
+		for i := 0; i < 4; i++ {
+			articleId = strings.TrimPrefix(articleId, fmt.Sprintf("t%d_", i))
+		}
+
 		rank, err := strconv.Atoi(strPos.Text())
 		if err != nil {
 			rank = 0 // it's probably a promoted or stickied article
