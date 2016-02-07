@@ -124,3 +124,24 @@ footer {
 footer span.extra {
   font-size: 0.8em;
 }
+
+/* sign up */
+
+div.signup {
+  width: 400px;
+}
+
+.signup h1 {
+  text-align: left;
+  font-size: 2em;
+  margin-top: 0px;
+}
+
+.signup div.error {
+  margin-top: 1.5em;
+}
+
+.signup #error {
+  padding: 0.5em;
+  font-size: 1.0em;
+}

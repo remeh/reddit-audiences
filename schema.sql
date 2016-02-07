@@ -47,3 +47,13 @@ CREATE TABLE "article" (
     "promoted" BOOLEAN DEFAULT false,
     "sticky" BOOLEAN DEFAULT false
 );
+
+-- user
+
+CREATE TABLE "user" (
+    "email" TEXT DEFAULT '',
+    "hash" TEXT DEFAULT '',
+    "salt" TEXT DEFAULT '',
+    "firstname" TEXT default '',
+    "lastname" TEXT default ''
+);

@@ -69,12 +69,12 @@ func (a *App) Listen() error {
 	return http.ListenAndServe(a.Config.ListenAddr, nil)
 }
 
-func (a *App) Add(pattern string, handler http.Handler) {
-	a.router.Handle(pattern, handler)
+func (a *App) Add(pattern string, handler http.Handler, methods ...string) {
+	a.router.Handle(pattern, handler).Methods(methods...)
 }
 
-func (a *App) AddApi(pattern string, handler http.Handler) {
-	a.router.PathPrefix("/api").Subrouter().Handle(pattern, handler)
+func (a *App) AddApi(pattern string, handler http.Handler, methods ...string) {
+	a.router.PathPrefix("/api").Subrouter().Handle(pattern, handler).Methods(methods...)
 }
 
 func (a *App) prepareStatic() {
