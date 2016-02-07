@@ -3,12 +3,18 @@ ready(function() {
 
   var audiences = {};
 
+  audiences.templates = {};
+
   audiences.draw = function(subreddit) {
     app.json('/api/today/' + subreddit, 'GET', this.on_receive_audience, this.on_error);
   };
 
   audiences.on_error = function(request) {
     alert('Error while retrieving the data for this subreddit.');
+  };
+
+  audiences.compile_templates = function() {
+    audiences.templates['article'] = _.template(document.getElementById('template_article').innerHTML);
   };
 
   audiences.on_receive_audience = function(xhr, data) {
@@ -38,35 +44,15 @@ ready(function() {
     audiences.update_labels(data);
 
     // articles
-    // ----------------------
+    // ---------------------- 
 
-    values = data.rankings;
-    lines_data = [];
-    var article_ids = Object.keys(values);
-    for (var i = 0; i < article_ids.length; i++) {
-      // create a line data for each article
-      var line_data = [];
-      var id = article_ids[i];
-      var ranking = values[id];
+    var articles_container = document.getElementById('articles_container');
 
-      for (var j = 0; j < ranking.length; j++) {
-        var rank = ranking[j];
-        line_data.push({
-          x: new Date(rank.crawl_time).getTime(),
-          y: rank.rank
-        });
-      }
-
-      lines_data.push({
-        area: false,
-        values: line_data,
-        key: id,
-        color: '#ff7f0e',
-        strokeWidth: 1,
-      });
+    for (var i = 0; i < data.articles.length; i++) {
+      var article = data.articles[i];
+      var rendered_article = audiences.templates['article'](article);
+      articles_container.insertAdjacentHTML('beforeend', rendered_article);
     }
-
-    audiences.draw_graph(lines_data, '#chart_articles');
   };
 
   audiences.update_labels = function(data) {
@@ -126,6 +112,9 @@ ready(function() {
 
   // attach to the app.
   app.audiences = audiences;
+
+  // compile the templates from 
+  audiences.compile_templates();
 
   // retrieves and display the data
   audiences.draw(subreddit);

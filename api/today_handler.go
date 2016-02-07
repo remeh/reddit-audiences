@@ -23,7 +23,7 @@ type todayHandlerResp struct {
 	Average         int64             `json:"average"`
 	LowestAudience  object.Audience   `json:"lowest_audience"`
 	HighestAudience object.Audience   `json:"highest_audience"`
-	Rankings        object.Rankings   `json:"rankings"`
+	Articles        []object.Article  `json:"articles"`
 }
 
 func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -35,7 +35,7 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dataAudiences, dataRankings, err := c.getData(subreddit)
+	dataAudiences, dataRankings, dataArticles, err := c.getData(subreddit)
 	if err != nil {
 		log.Println("err:", err.Error())
 		w.WriteHeader(500)
@@ -45,11 +45,12 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	audiences := object.AudiencesFromApp(dataAudiences)
 	lowest, highest := app.LowestHighest(dataAudiences)
 	rankings := object.RankingsFromApp(dataRankings)
+	articles := object.ArticlesFromApp(dataArticles, rankings)
 
 	buff, err := json.Marshal(todayHandlerResp{
 		Audiences:       audiences,
 		Average:         app.Average(dataAudiences),
-		Rankings:        rankings,
+		Articles:        articles,
 		LowestAudience:  object.AudienceFromApp(lowest),
 		HighestAudience: object.AudienceFromApp(highest),
 	})
@@ -62,7 +63,7 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (c TodayHandler) getData(subreddit string) ([]app.Audience, []app.Ranking, error) {
+func (c TodayHandler) getData(subreddit string) ([]app.Audience, []app.Ranking, []app.Article, error) {
 	var start, end time.Time
 
 	end = time.Now()
@@ -70,13 +71,18 @@ func (c TodayHandler) getData(subreddit string) ([]app.Audience, []app.Ranking, 
 
 	audiences, err := c.App.DB().FindAudiencesInterval(subreddit, start, end)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
 	rankings, err := c.App.DB().FindArticlesRanking(subreddit, start, end)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
-	return audiences, rankings, nil
+	articles, err := c.App.DB().FindArticles(subreddit, start, end)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	return audiences, rankings, articles, nil
 }

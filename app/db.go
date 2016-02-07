@@ -31,7 +31,7 @@ const (
 	`
 	INSERT_ARTICLE = `
 		INSERT INTO "article"
-		(subreddit, article_id, article_title, article_link, author, rank, crawl_time, promoted, sticky)
+		("subreddit", "article_id", "article_title", "article_link", "author", "rank", "crawl_time", "promoted", "sticky")
 		VALUES
 		($1, $2, $3, $4, $5, $6, $7, $8, $9)
 	`
@@ -60,7 +60,21 @@ const (
 			"crawl_time" >= $2
 			AND
 			"crawl_time" <= $3
-		ORDER BY crawl_time <= $3
+		ORDER BY "crawl_time"
+	`
+	FIND_ARTICLES = `
+		SELECT * FROM (
+			SELECT DISTINCT ON ("subreddit", "article_id") "subreddit", "article_id", "article_title", "article_link", "author", "rank", "crawl_time", "promoted", "sticky"
+			FROM
+				"article"
+			WHERE
+				"subreddit" = $1
+				AND
+				"crawl_time" >= $2
+				AND
+				"crawl_time" <= $3
+		) sub_query
+		ORDER BY sub_query.rank
 	`
 	AUDIENCES_INTERVAL = `
 		SELECT "audience", "crawl_time"
@@ -141,6 +155,48 @@ func (c Conn) FindSubredditsToCrawl(after time.Time) ([]string, error) {
 
 		if len(subreddit) > 0 {
 			rv = append(rv, subreddit)
+		}
+	}
+
+	return rv, nil
+}
+
+func (c Conn) FindArticles(subreddit string, start, end time.Time) ([]Article, error) {
+	rv := make([]Article, 0)
+
+	r, err := c.db.Query(FIND_ARTICLES, subreddit, start, end)
+	if err != nil {
+		return rv, err
+	}
+
+	if r == nil {
+		return rv, nil
+	}
+
+	defer r.Close()
+
+	for r.Next() {
+		var subreddit, articleId, articleTitle, articleLink, author string
+		var rank int
+		var crawlTime time.Time
+		var promoted, sticky bool
+
+		if err := r.Scan(&subreddit, &articleId, &articleTitle, &articleLink, &author, &rank, &crawlTime, &promoted, &sticky); err != nil {
+			return rv, err
+		}
+
+		if len(articleId) > 0 {
+			rv = append(rv, Article{
+				Subreddit:    subreddit,
+				ArticleId:    articleId,
+				ArticleTitle: articleTitle,
+				ArticleLink:  articleLink,
+				Author:       author,
+				Rank:         rank,
+				CrawlTime:    crawlTime,
+				Promoted:     promoted,
+				Sticky:       sticky,
+			})
 		}
 	}
 
