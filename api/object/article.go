@@ -1,6 +1,8 @@
 package object
 
 import (
+	"strings"
+
 	"github.com/remeh/reddit-audiences/app"
 )
 
@@ -37,10 +39,16 @@ func ArticleFromApp(article app.Article, ranking []Ranking) Article {
 		}
 	}
 
+	// rebuild the http link for self posts
+	link := article.ArticleLink
+	if strings.HasPrefix(link, "/r/") {
+		link = "https://reddit.com" + link
+	}
+
 	return Article{
 		ArticleId:    article.ArticleId,
 		ArticleTitle: article.ArticleTitle,
-		ArticleLink:  article.ArticleLink,
+		ArticleLink:  link,
 		Author:       article.Author,
 		Promoted:     article.Promoted,
 		Sticky:       article.Sticky,
