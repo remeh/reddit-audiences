@@ -2,15 +2,18 @@
   <script type="text/template" id="template_article">
     <div class="article">
       <div class="col-md-8"> 
+      <% if (promoted) { %>
+        <i class="fa fa-usd"> </i>
+      <% } else if (sticky) { %>
+        <i class="fa fa-tag"> </i>
+      <% } %>
         <a href="${article_link}" title="${article_title}">${article_title}</a>
       </div>
       <% if (promoted) { %>
         <div class="col-md-4">
-          <i class="fa fa-usd"></i> Promoted 
         </div>
       <% } else if (sticky) { %>
         <div class="col-md-4">
-          <i class="fa fa-tag"></i> Sticky
         </div>
       <% } else { %>
           <div class="col-md-2">
