@@ -133,7 +133,9 @@ func readDOMData(subreddit string) (int64, int64, []Article, error) {
 	now := time.Now()
 	articles := make([]Article, 0)
 	s = doc.Find(".link").Each(func(i int, selec *goquery.Selection) {
-		title := selec.Find("p.title a.title").First()
+		l := selec.Find("p.title a.title")
+		title := l.First()
+		link, _ := l.Attr("href")
 		strPos := selec.ChildrenFiltered(".rank").First()
 		articleId, _ := selec.Attr("data-fullname")
 		author, _ := selec.Attr("data-author")
@@ -159,6 +161,7 @@ func readDOMData(subreddit string) (int64, int64, []Article, error) {
 			Subreddit:    subreddit,
 			ArticleId:    articleId,
 			ArticleTitle: title.Text(),
+			ArticleLink:  link,
 			Author:       author,
 			Rank:         rank,
 			CrawlTime:    now,
