@@ -39,3 +39,34 @@ func LowestHighest(audiences []Audience) (Audience, Audience) {
 
 	return lowest, highest
 }
+
+func ComputeArticleState(article Article, ranking []Ranking) ArticleState {
+	if len(ranking) <= 2 {
+		return New
+	}
+
+	increasing, decreasing := 0, 0
+
+	prev := ranking[0]
+	for i, r := range ranking {
+		if i == 0 {
+			continue
+		}
+
+		if prev.Rank > r.Rank {
+			increasing += 1
+		} else if prev.Rank < r.Rank {
+			decreasing += 1
+		}
+
+		prev = r
+	}
+
+	if increasing > decreasing {
+		return Rising
+	} else if decreasing > increasing {
+		return Falling
+	}
+
+	return Stagnant
+}

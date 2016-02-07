@@ -203,8 +203,8 @@ func (c Conn) FindArticles(subreddit string, start, end time.Time) ([]Article, e
 	return rv, nil
 }
 
-func (c Conn) FindArticlesRanking(subreddit string, start, end time.Time) ([]Ranking, error) {
-	rv := make([]Ranking, 0)
+func (c Conn) FindArticlesRanking(subreddit string, start, end time.Time) (map[string][]Ranking, error) {
+	rv := make(map[string][]Ranking)
 
 	r, err := c.db.Query(ARTICLES_RANKING, subreddit, start, end)
 	if err != nil {
@@ -226,14 +226,20 @@ func (c Conn) FindArticlesRanking(subreddit string, start, end time.Time) ([]Ran
 			return rv, err
 		}
 
-		if len(subreddit) > 0 {
-			rv = append(rv, Ranking{
-				Subreddit: subreddit,
-				CrawlTime: crawlTime,
-				Rank:      rank,
-				ArticleId: articleId,
-			})
+		if len(articleId) == 0 {
+			continue
 		}
+
+		if _, exists := rv[articleId]; !exists {
+			rv[articleId] = make([]Ranking, 0)
+		}
+
+		rv[articleId] = append(rv[articleId], Ranking{
+			Subreddit: subreddit,
+			CrawlTime: crawlTime,
+			Rank:      rank,
+			ArticleId: articleId,
+		})
 	}
 
 	return rv, nil

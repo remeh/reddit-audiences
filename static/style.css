@@ -88,3 +88,16 @@ div.main-container {
   font-size: 1.5em;
   margin-right: 1em;
 }
+
+.audiences .icon-falling {
+  color: #d51a1a;
+}
+
+.audiences .icon-new {
+  font-size: 0.7em;
+  color: #2c2c2c;
+}
+
+.audiences .icon-rising {
+  color: #1ad52c;
+}

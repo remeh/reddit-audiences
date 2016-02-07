@@ -4,6 +4,16 @@ import (
 	"time"
 )
 
+type ArticleState string
+
+var (
+	Rising   ArticleState = "rising"
+	Stagnant ArticleState = "stagnant"
+	Falling  ArticleState = "falling"
+	New      ArticleState = "new"
+	// NOTE(remy): disappearing ?
+)
+
 type Audience struct {
 	Subreddit   string
 	Audience    int64

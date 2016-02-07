@@ -44,8 +44,7 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	audiences := object.AudiencesFromApp(dataAudiences)
 	lowest, highest := app.LowestHighest(dataAudiences)
-	rankings := object.RankingsFromApp(dataRankings)
-	articles := object.ArticlesFromApp(dataArticles, rankings)
+	articles := object.ArticlesFromApp(dataArticles, dataRankings)
 
 	buff, err := json.Marshal(todayHandlerResp{
 		Audiences:       audiences,
@@ -63,7 +62,7 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (c TodayHandler) getData(subreddit string) ([]app.Audience, []app.Ranking, []app.Article, error) {
+func (c TodayHandler) getData(subreddit string) ([]app.Audience, map[string][]app.Ranking, []app.Article, error) {
 	var start, end time.Time
 
 	end = time.Now()

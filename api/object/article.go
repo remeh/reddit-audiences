@@ -7,18 +7,19 @@ import (
 )
 
 type Article struct {
-	ArticleId    string `json:"article_id"`
-	ArticleTitle string `json:"article_title"`
-	ArticleLink  string `json:"article_link"`
-	Author       string `json:"author"`
-	Promoted     bool   `json:"promoted"`
-	Sticky       bool   `json:"sticky"`
-	MinRank      int    `json:"min_rank"`
-	MaxRank      int    `json:"max_rank"`
+	ArticleId    string           `json:"article_id"`
+	ArticleTitle string           `json:"article_title"`
+	ArticleLink  string           `json:"article_link"`
+	State        app.ArticleState `json:"state"`
+	Author       string           `json:"author"`
+	Promoted     bool             `json:"promoted"`
+	Sticky       bool             `json:"sticky"`
+	MinRank      int              `json:"min_rank"`
+	MaxRank      int              `json:"max_rank"`
 	//Ranking      []Ranking `json:"ranking"`
 }
 
-func ArticlesFromApp(articles []app.Article, rankings Rankings) []Article {
+func ArticlesFromApp(articles []app.Article, rankings map[string][]app.Ranking) []Article {
 	rv := make([]Article, len(articles))
 	for i, a := range articles {
 		rv[i] = ArticleFromApp(a, rankings[a.ArticleId])
@@ -26,7 +27,11 @@ func ArticlesFromApp(articles []app.Article, rankings Rankings) []Article {
 	return rv
 }
 
-func ArticleFromApp(article app.Article, ranking []Ranking) Article {
+func ArticleFromApp(article app.Article, ranking []app.Ranking) Article {
+	if ranking == nil {
+		return Article{}
+	}
+
 	var min, max int
 	min = 10E6
 
@@ -45,10 +50,13 @@ func ArticleFromApp(article app.Article, ranking []Ranking) Article {
 		link = "https://reddit.com" + link
 	}
 
+	state := app.ComputeArticleState(article, ranking)
+
 	return Article{
 		ArticleId:    article.ArticleId,
 		ArticleTitle: article.ArticleTitle,
 		ArticleLink:  link,
+		State:        state,
 		Author:       article.Author,
 		Promoted:     article.Promoted,
 		Sticky:       article.Sticky,
