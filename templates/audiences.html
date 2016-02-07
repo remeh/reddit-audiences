@@ -7,7 +7,7 @@
       <% } else if (sticky) { %>
         <i class="fa fa-tag"> </i>
       <% } %>
-        <a href="${article_link}" title="${article_title}">${article_title}</a>
+        <a href="${article_link}" title="<%- article_title %>"><%- article_title %></a>
       </div>
       <% if (promoted) { %>
         <div class="col-lg-4">
