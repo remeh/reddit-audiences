@@ -2,6 +2,7 @@ package web
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/remeh/reddit-audiences/app"
 
@@ -23,7 +24,7 @@ func (c Audiences) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	subreddit := vars["subreddit"]
 
 	// test if known subreddit
-
+	subreddit = strings.ToLower(strings.Trim(subreddit, " "))
 	if len(subreddit) == 0 {
 		http.Redirect(w, r, "/", 301)
 		return
