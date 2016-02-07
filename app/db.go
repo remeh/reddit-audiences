@@ -51,6 +51,17 @@ const (
 			"last_crawl" = $2
 		WHERE "name" = $1
 	`
+	ARTICLES_RANKING = `
+		SELECT "rank", "article_id", "crawl_time"
+		FROM "article"
+		WHERE
+			"subreddit" = $1
+			AND
+			"crawl_time" >= $2
+			AND
+			"crawl_time" <= $3
+		ORDER BY crawl_time <= $3
+	`
 	AUDIENCES_INTERVAL = `
 		SELECT "audience", "crawl_time"
 		FROM "audience"
@@ -130,6 +141,42 @@ func (c Conn) FindSubredditsToCrawl(after time.Time) ([]string, error) {
 
 		if len(subreddit) > 0 {
 			rv = append(rv, subreddit)
+		}
+	}
+
+	return rv, nil
+}
+
+func (c Conn) FindArticlesRanking(subreddit string, start, end time.Time) ([]Ranking, error) {
+	rv := make([]Ranking, 0)
+
+	r, err := c.db.Query(ARTICLES_RANKING, subreddit, start, end)
+	if err != nil {
+		return rv, err
+	}
+
+	if r == nil {
+		return rv, nil
+	}
+
+	defer r.Close()
+
+	for r.Next() {
+		var rank int
+		var articleId string
+		var crawlTime time.Time
+
+		if err := r.Scan(&rank, &articleId, &crawlTime); err != nil {
+			return rv, err
+		}
+
+		if len(subreddit) > 0 {
+			rv = append(rv, Ranking{
+				Subreddit: subreddit,
+				CrawlTime: crawlTime,
+				Rank:      rank,
+				ArticleId: articleId,
+			})
 		}
 	}
 

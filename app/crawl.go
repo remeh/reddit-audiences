@@ -140,6 +140,7 @@ func readDOMData(subreddit string) (int64, int64, []Article, error) {
 		articleId, _ := selec.Attr("data-fullname")
 		author, _ := selec.Attr("data-author")
 
+		// remove the t[1-3]_ from the article id
 		for i := 0; i < 4; i++ {
 			articleId = strings.TrimPrefix(articleId, fmt.Sprintf("t%d_", i))
 		}
@@ -158,8 +159,6 @@ func readDOMData(subreddit string) (int64, int64, []Article, error) {
 		if selec.HasClass("stickied") {
 			sticky = true
 		}
-
-		// TODO(remy):remove the t[1-3]_ from the article id
 
 		articles = append(articles, Article{
 			Subreddit:    subreddit,

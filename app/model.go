@@ -22,3 +22,10 @@ type Article struct {
 	Promoted     bool
 	Sticky       bool
 }
+
+type Ranking struct {
+	Subreddit string
+	ArticleId string
+	CrawlTime time.Time
+	Rank      int
+}

@@ -13,27 +13,60 @@ ready(function() {
 
   audiences.on_receive_audience = function(xhr, data) {
     var graph_data = [];
+    var ranking_data = [];
+
+    // audiences
+    // ----------------------
 
     var values = data.audiences;
-
     for (var i = 0; i < values.length; i++) {
       graph_data.push({
         x: new Date(values[i].crawl_time).getTime(),
         y: values[i].audience,
       });
     }
-
-    var line_data = [
+    var lines_data = [
     {
         area: true,
         values: graph_data,
         key: subreddit,
-        color: "#ff7f0e",
+        color: '#ff7f0e',
         strokeWidth: 2,
     }];
 
-    audiences.draw_graph(line_data);
+    audiences.draw_graph(lines_data, '#chart');
     audiences.update_labels(data);
+
+    // articles
+    // ----------------------
+
+    values = data.rankings;
+    lines_data = [];
+    var article_ids = Object.keys(values);
+    for (var i = 0; i < article_ids.length; i++) {
+      // create a line data for each article
+      var line_data = [];
+      var id = article_ids[i];
+      var ranking = values[id];
+
+      for (var j = 0; j < ranking.length; j++) {
+        var rank = ranking[j];
+        line_data.push({
+          x: new Date(rank.crawl_time).getTime(),
+          y: rank.rank
+        });
+      }
+
+      lines_data.push({
+        area: false,
+        values: line_data,
+        key: id,
+        color: '#ff7f0e',
+        strokeWidth: 1,
+      });
+    }
+
+    audiences.draw_graph(lines_data, '#chart_articles');
   };
 
   audiences.update_labels = function(data) {
@@ -55,17 +88,16 @@ ready(function() {
       }
     }
 
-
     document.getElementById('average').innerHTML = average;
     document.getElementById('lowest').innerHTML = lowest;
     document.getElementById('highest').innerHTML = highest;
   };
 
-  audiences.draw_graph = function(data) {
+  audiences.draw_graph = function(data, domNodeSelector) {
     nv.addGraph(function() {
       var chart = nv.models.lineChart()
                     .options({
-                      //useInteractiveGuideline: true,
+                      useInteractiveGuideline: true,
                       transitionDuration: 350,
                       showLegend: true,
                       showYAxis: true,
@@ -82,7 +114,7 @@ ready(function() {
           .axisLabel(subreddit)
           .tickFormat(d3.format('i'));
 
-      d3.select('#chart').append('svg')
+      d3.select(domNodeSelector).append('svg')
           .datum(data)
           .call(chart);
 

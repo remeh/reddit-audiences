@@ -23,6 +23,7 @@ type todayHandlerResp struct {
 	Average         int64             `json:"average"`
 	LowestAudience  object.Audience   `json:"lowest_audience"`
 	HighestAudience object.Audience   `json:"highest_audience"`
+	Rankings        object.Rankings   `json:"rankings"`
 }
 
 func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -34,19 +35,21 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := c.getData(subreddit)
+	dataAudiences, dataRankings, err := c.getData(subreddit)
 	if err != nil {
 		log.Println("err:", err.Error())
 		w.WriteHeader(500)
 		return
 	}
 
-	audiences := object.AudiencesFromApp(data)
-	lowest, highest := app.LowestHighest(data)
+	audiences := object.AudiencesFromApp(dataAudiences)
+	lowest, highest := app.LowestHighest(dataAudiences)
+	rankings := object.RankingsFromApp(dataRankings)
 
 	buff, err := json.Marshal(todayHandlerResp{
 		Audiences:       audiences,
-		Average:         app.Average(data),
+		Average:         app.Average(dataAudiences),
+		Rankings:        rankings,
 		LowestAudience:  object.AudienceFromApp(lowest),
 		HighestAudience: object.AudienceFromApp(highest),
 	})
@@ -59,11 +62,21 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (c TodayHandler) getData(subreddit string) ([]app.Audience, error) {
+func (c TodayHandler) getData(subreddit string) ([]app.Audience, []app.Ranking, error) {
 	var start, end time.Time
 
 	end = time.Now()
 	start = time.Date(end.Year(), end.Month(), end.Day(), 0, 0, 0, 0, end.Location())
 
-	return c.App.DB().FindAudiencesInterval(subreddit, start, end)
+	audiences, err := c.App.DB().FindAudiencesInterval(subreddit, start, end)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	rankings, err := c.App.DB().FindArticlesRanking(subreddit, start, end)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return audiences, rankings, nil
 }
