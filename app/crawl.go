@@ -217,10 +217,12 @@ func getSubredditPage(url string) (*goquery.Document, error) {
 	resp, err := client.Do(r)
 
 	if err != nil {
+		resp.Body.Close()
 		return nil, err
 	}
 
 	if resp.StatusCode != 200 {
+		resp.Body.Close()
 		return nil, fmt.Errorf(resp.Status)
 	}
 
