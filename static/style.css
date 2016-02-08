@@ -114,10 +114,21 @@ div.main-container {
 
 .audiences .col-header {
   font-weight: bold;
+  border: 0px;
 }
 
 .audiences .article .col-entry {
   text-align: center;
+}
+
+.audiences .article .col-entry-small {
+  padding-top: 1em;
+  font-size: 0.8em;
+  color: #bbbbbb;
+}
+
+.audiences .article .col-entry-small:hover {
+  color: #999999;
 }
 
 footer {

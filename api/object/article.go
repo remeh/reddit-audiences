@@ -13,6 +13,7 @@ type Article struct {
 	ArticleTitle string           `json:"title"`
 	ArticleLink  string           `json:"link"`
 	State        app.ArticleState `json:"state"`
+	FirstSeen    *time.Time       `json:"first_seen,omitempty"`
 	Author       string           `json:"author"`
 	Promoted     bool             `json:"promoted"`
 	Sticky       bool             `json:"sticky"`
@@ -45,7 +46,8 @@ func ArticleFromApp(article app.Article, ranking []app.Ranking) Article {
 	}
 
 	var min, max, current int
-	var latest time.Time
+	var firstSeen *time.Time = nil
+	var lastSeen time.Time
 	min = 10E6
 
 	for _, r := range ranking {
@@ -56,8 +58,12 @@ func ArticleFromApp(article app.Article, ranking []app.Ranking) Article {
 			min = r.Rank
 		}
 
-		if r.CrawlTime.After(latest) {
+		if r.CrawlTime.After(lastSeen) {
 			current = r.Rank
+		}
+
+		if firstSeen == nil || r.CrawlTime.Before(*firstSeen) {
+			firstSeen = &r.CrawlTime
 		}
 	}
 
@@ -78,6 +84,7 @@ func ArticleFromApp(article app.Article, ranking []app.Ranking) Article {
 		Promoted:     article.Promoted,
 		Sticky:       article.Sticky,
 		CurrentRank:  current,
+		FirstSeen:    firstSeen,
 		MinRank:      min,
 		MaxRank:      max,
 		//Ranking:      ranking,

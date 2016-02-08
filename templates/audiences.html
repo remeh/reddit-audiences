@@ -1,6 +1,7 @@
 {{template "header.html"}} 
   <script type="text/template" id="template_article">
     <div class="article">
+      <div class="row">
       <div class="col-lg-8"> 
       <% if (promoted) { %>
         <i class="fa fa-usd"> </i>
@@ -39,6 +40,16 @@
           <div class="col-lg-1 col-entry" title="Lowest rank">
             ${max_rank}
           </div>
+      <% } %>
+      </div>
+      <% if (!sticky && !promoted) { %>
+      <div class="row">
+        <div class="col-lg-offset-10 col-lg-2 col-entry col-entry-small">
+          <% if (first_seen) { %>
+            First seen at <% print(moment(new Date(first_seen)).format('HH:mm a')); %>
+          <% } %>
+        </div>
+      </div>
       <% } %>
     </div>
   </script>
@@ -82,12 +93,12 @@
       <h2>Articles</h2>
     </div>
     <div class="row" id="articles_container">
-      <div class="article">
-        <div class="col-lg-8 col-entry col-header">Articles</div>
-        <div class="col-lg-1 col-entry col-header">State</div>
-        <div class="col-lg-1 col-entry col-header">Current rank</div>
-        <div class="col-lg-1 col-entry col-header">Highest rank</div>
-        <div class="col-lg-1 col-entry col-header">Lowest rank</div>
+      <div class="article col-header">
+        <div class="col-lg-8 col-entry">Articles</div>
+        <div class="col-lg-1 col-entry">State</div>
+        <div class="col-lg-1 col-entry">Current rank</div>
+        <div class="col-lg-1 col-entry">Highest rank</div>
+        <div class="col-lg-1 col-entry">Lowest rank</div>
       </div>
     </div>
   </div>
