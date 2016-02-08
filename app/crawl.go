@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	REDDIT_SUBREDDIT_URL           = "https://reddit.com/r/"
+	REDDIT_SUBREDDIT_URL           = "https://www.reddit.com/r/"
 	MIN_SECONDS_BETWEEN_EACH_CRAWL = 1
 )
 
