@@ -98,6 +98,10 @@ div.main-container {
   color: #2c2c2c;
 }
 
+.audiences #articles_container {
+  margin-top: 2em;
+}
+
 .audiences .article {
   padding: 1em;
   padding-bottom: 1.0em;
