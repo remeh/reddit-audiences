@@ -6,6 +6,7 @@ package app
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"strconv"
 	"strings"
@@ -15,8 +16,8 @@ import (
 )
 
 const (
-	REDDIT_SUBREDDIT_URL       = "https://reddit.com/r/"
-	SECONDS_BETWEEN_EACH_CRAWL = 1
+	REDDIT_SUBREDDIT_URL           = "https://reddit.com/r/"
+	MIN_SECONDS_BETWEEN_EACH_CRAWL = 1
 )
 
 var subredditsToCrawl chan string
@@ -62,7 +63,9 @@ func Worker(a *App) {
 			log.Println("err:", err.Error())
 		}
 
-		time.Sleep(SECONDS_BETWEEN_EACH_CRAWL * time.Second) // wait a bit before the next crawl
+		r := time.Duration(((rand.Int() % 2) + MIN_SECONDS_BETWEEN_EACH_CRAWL)) * time.Second
+
+		time.Sleep(r) // wait a bit before the next crawl
 	}
 }
 
