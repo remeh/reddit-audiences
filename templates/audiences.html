@@ -27,7 +27,11 @@
             <% } %>
           </div>
           <div class="col-lg-1 col-entry" title="Current rank">
-            ${current_rank}
+            <% if (current_rank > 20) { %>
+              >20
+            <% } else { %>
+              ${current_rank}
+            <% } %>
           </div>
           <div class="col-lg-1 col-entry" title="Highest rank">
             ${min_rank}

@@ -1,6 +1,7 @@
 package object
 
 import (
+	"sort"
 	"strings"
 	"time"
 
@@ -21,12 +22,21 @@ type Article struct {
 	//Ranking      []Ranking `json:"ranking"`
 }
 
+type ByRank []Article
+
+func (r ByRank) Len() int           { return len(r) }
+func (r ByRank) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
+func (r ByRank) Less(i, j int) bool { return r[i].CurrentRank < r[j].CurrentRank }
+
 func ArticlesFromApp(articles []app.Article, rankings map[string][]app.Ranking) []Article {
 	rv := make([]Article, len(articles))
 	for i, a := range articles {
 		rv[i] = ArticleFromApp(a, rankings[a.ArticleId])
 	}
-	return rv
+
+	byRank := ByRank(rv)
+	sort.Sort(&byRank)
+	return byRank
 }
 
 func ArticleFromApp(article app.Article, ranking []app.Ranking) Article {
