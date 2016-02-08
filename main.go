@@ -20,15 +20,15 @@ func main() {
 
 func declareWebRoutes(a *app.App) {
 	// Finally index
-	a.Add("/audiences/{subreddit}", web.Audiences{a})
+	a.Add("/audiences/{subreddit}", web.Audiences{a}, "GET")
 
 	a.Add("/signup", web.SignupGet{a}, "GET")
 	a.Add("/signup", web.SignupPost{a}, "POST")
 
-	a.Add("/index", web.Index{a})
-	a.Add("/", web.Index{a})
+	a.Add("/index", web.Index{a}, "GET")
+	a.Add("/", web.Index{a}, "GET")
 }
 
 func declareApiRoutes(a *app.App) {
-	a.AddApi("/today/{subreddit}", LogRoute(a, TodayHandler{a}))
+	a.AddApi("/today/{subreddit}", LogRoute(a, TodayHandler{a}), "GET")
 }
