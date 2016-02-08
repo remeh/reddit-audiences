@@ -40,6 +40,7 @@ CREATE TABLE "article" (
     "subreddit" TEXT DEFAULT '', -- foreign key to subreddit
     "article_id" TEXT DEFAULT '', -- reddit article id
     "article_title" TEXT DEFAULT '',
+    "article_external_link" TEXT DEFAULT '',
     "article_link" TEXT DEFAULT '',
     "author" TEXT DEFAULT '',
     "rank" INT DEFAULT 0,

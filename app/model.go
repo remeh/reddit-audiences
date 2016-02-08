@@ -22,15 +22,16 @@ type Audience struct {
 }
 
 type Article struct {
-	Subreddit    string
-	ArticleId    string
-	ArticleTitle string
-	ArticleLink  string
-	Author       string
-	Rank         int
-	CrawlTime    time.Time
-	Promoted     bool
-	Sticky       bool
+	Subreddit           string
+	ArticleId           string
+	ArticleTitle        string
+	ArticleLink         string
+	ArticleExternalLink string
+	Author              string
+	Rank                int
+	CrawlTime           time.Time
+	Promoted            bool
+	Sticky              bool
 }
 
 type Ranking struct {

@@ -7,9 +7,9 @@ import (
 )
 
 type Article struct {
-	ArticleId    string           `json:"article_id"`
-	ArticleTitle string           `json:"article_title"`
-	ArticleLink  string           `json:"article_link"`
+	ArticleId    string           `json:"id"`
+	ArticleTitle string           `json:"title"`
+	ArticleLink  string           `json:"link"`
 	State        app.ArticleState `json:"state"`
 	Author       string           `json:"author"`
 	Promoted     bool             `json:"promoted"`

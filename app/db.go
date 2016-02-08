@@ -31,9 +31,9 @@ const (
 	`
 	INSERT_ARTICLE = `
 		INSERT INTO "article"
-		("subreddit", "article_id", "article_title", "article_link", "author", "rank", "crawl_time", "promoted", "sticky")
+		("subreddit", "article_id", "article_title", "article_link", "article_external_link", "author", "rank", "crawl_time", "promoted", "sticky")
 		VALUES
-		($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 	`
 	LAST_ARTICLE_STATE = `
 		SELECT "article_id", "rank"
@@ -64,7 +64,7 @@ const (
 	`
 	FIND_ARTICLES = `
 		SELECT * FROM (
-			SELECT DISTINCT ON ("subreddit", "article_id") "subreddit", "article_id", "article_title", "article_link", "author", "rank", "crawl_time", "promoted", "sticky"
+			SELECT DISTINCT ON ("subreddit", "article_id") "subreddit", "article_id", "article_title", "article_link", "article_external_link", "author", "rank", "crawl_time", "promoted", "sticky"
 			FROM
 				"article"
 			WHERE
@@ -128,7 +128,7 @@ func (c Conn) FindArticleLastState(subreddit, articleId string) (string, int, er
 }
 
 func (c Conn) InsertArticle(article Article) (sql.Result, error) {
-	return c.db.Exec(INSERT_ARTICLE, article.Subreddit, article.ArticleId, article.ArticleTitle, article.ArticleLink, article.Author, article.Rank, article.CrawlTime, article.Promoted, article.Sticky)
+	return c.db.Exec(INSERT_ARTICLE, article.Subreddit, article.ArticleId, article.ArticleTitle, article.ArticleLink, article.ArticleExternalLink, article.Author, article.Rank, article.CrawlTime, article.Promoted, article.Sticky)
 }
 
 // GetSubredditsToCrawl returns the subreddits which must be
@@ -176,26 +176,27 @@ func (c Conn) FindArticles(subreddit string, start, end time.Time) ([]Article, e
 	defer r.Close()
 
 	for r.Next() {
-		var subreddit, articleId, articleTitle, articleLink, author string
+		var subreddit, articleId, articleTitle, articleLink, articleExtLink, author string
 		var rank int
 		var crawlTime time.Time
 		var promoted, sticky bool
 
-		if err := r.Scan(&subreddit, &articleId, &articleTitle, &articleLink, &author, &rank, &crawlTime, &promoted, &sticky); err != nil {
+		if err := r.Scan(&subreddit, &articleId, &articleTitle, &articleLink, &articleExtLink, &author, &rank, &crawlTime, &promoted, &sticky); err != nil {
 			return rv, err
 		}
 
 		if len(articleId) > 0 {
 			rv = append(rv, Article{
-				Subreddit:    subreddit,
-				ArticleId:    articleId,
-				ArticleTitle: articleTitle,
-				ArticleLink:  articleLink,
-				Author:       author,
-				Rank:         rank,
-				CrawlTime:    crawlTime,
-				Promoted:     promoted,
-				Sticky:       sticky,
+				Subreddit:           subreddit,
+				ArticleId:           articleId,
+				ArticleTitle:        articleTitle,
+				ArticleLink:         articleLink,
+				ArticleExternalLink: articleExtLink,
+				Author:              author,
+				Rank:                rank,
+				CrawlTime:           crawlTime,
+				Promoted:            promoted,
+				Sticky:              sticky,
 			})
 		}
 	}
