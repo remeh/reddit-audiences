@@ -112,6 +112,14 @@ div.main-container {
   color: #1ad52c;
 }
 
+.audiences .col-header {
+  font-weight: bold;
+}
+
+.audiences .article .col-entry {
+  text-align: center;
+}
+
 footer {
   padding: 1em;
   padding-top: 2em;

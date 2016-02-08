@@ -2,6 +2,7 @@ package object
 
 import (
 	"strings"
+	"time"
 
 	"github.com/remeh/reddit-audiences/app"
 )
@@ -15,6 +16,7 @@ type Article struct {
 	Promoted     bool             `json:"promoted"`
 	Sticky       bool             `json:"sticky"`
 	MinRank      int              `json:"min_rank"`
+	CurrentRank  int              `json:"current_rank"`
 	MaxRank      int              `json:"max_rank"`
 	//Ranking      []Ranking `json:"ranking"`
 }
@@ -32,7 +34,8 @@ func ArticleFromApp(article app.Article, ranking []app.Ranking) Article {
 		return Article{}
 	}
 
-	var min, max int
+	var min, max, current int
+	var latest time.Time
 	min = 10E6
 
 	for _, r := range ranking {
@@ -41,6 +44,10 @@ func ArticleFromApp(article app.Article, ranking []app.Ranking) Article {
 		}
 		if r.Rank < min {
 			min = r.Rank
+		}
+
+		if r.CrawlTime.After(latest) {
+			current = r.Rank
 		}
 	}
 
@@ -60,6 +67,7 @@ func ArticleFromApp(article app.Article, ranking []app.Ranking) Article {
 		Author:       article.Author,
 		Promoted:     article.Promoted,
 		Sticky:       article.Sticky,
+		CurrentRank:  current,
 		MinRank:      min,
 		MaxRank:      max,
 		//Ranking:      ranking,
