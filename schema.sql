@@ -27,7 +27,7 @@ CREATE UNIQUE INDEX ON "subreddit" ("name");
 CREATE TABLE "audience" (
     "subreddit" TEXT default '',
     "crawl_time" TIMESTAMP WITH TIME ZONE,
-    "audience" INT DEFAULT 0
+    "audience" INT DEFAULT 0,
     "subscribers" INT DEFAULT 0
 );
 

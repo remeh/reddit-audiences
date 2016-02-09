@@ -35,9 +35,39 @@ func ArticlesFromApp(articles []app.Article, rankings map[string][]app.Ranking) 
 		rv[i] = ArticleFromApp(a, rankings[a.ArticleId])
 	}
 
+	// sort by current rank
 	byRank := ByRank(rv)
 	sort.Sort(&byRank)
+
+	// compute disappeared articles
+	// it's done on already sorted by rank articles
+	// to be quicker (no need to test other ranks).
+	byRank.computeRemoved()
+
 	return byRank
+}
+
+func (r ByRank) computeRemoved() {
+	for i, tested := range r {
+		if tested.FirstSeen == nil {
+			continue
+		}
+
+		for _, a := range r {
+			if a.CurrentRank > tested.CurrentRank {
+				// no need to test with ones having an higher rank
+				break
+			}
+
+			if tested.CurrentRank == a.CurrentRank {
+				if tested.FirstSeen.Before(*a.FirstSeen) {
+					tested.State = app.Removed
+					r[i] = tested
+					break
+				}
+			}
+		}
+	}
 }
 
 func ArticleFromApp(article app.Article, ranking []app.Ranking) Article {

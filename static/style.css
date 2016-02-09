@@ -98,6 +98,11 @@ div.main-container {
   color: #2c2c2c;
 }
 
+.audiences .icon-removed {
+  font-size: 0.7em;
+  color: #aaaaaa;
+}
+
 .audiences #articles_container {
   margin-top: 2em;
 }

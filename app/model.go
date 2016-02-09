@@ -11,7 +11,7 @@ var (
 	Stagnant ArticleState = "stagnant"
 	Falling  ArticleState = "falling"
 	New      ArticleState = "new"
-	// NOTE(remy): disappearing ?
+	Removed  ArticleState = "removed"
 )
 
 type Audience struct {
