@@ -140,6 +140,10 @@ div.main-container {
   color: #999999;
 }
 
+.audiences .row .articles-actions {
+  text-align: center;
+}
+
 footer {
   padding: 1em;
   padding-top: 2em;

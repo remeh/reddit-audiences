@@ -1,6 +1,6 @@
 {{template "header.html"}} 
   <script type="text/template" id="template_article">
-    <div class="article">
+    <div class="article <% if (state == 'removed') { print('article-removed'); } %>">
       <div class="row">
       <div class="col-lg-8"> 
       <% if (promoted) { %>
@@ -89,6 +89,13 @@
       </div>
       <div class="col-lg-6 info-value">
         <i class="fa fa-long-arrow-down info-icons"></i> <span class="info-value" id="lowest"></span>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-lg-offset-9 col-lg-3 articles-actions">
+        <input type="checkbox" checked="true" id="hide-removed" onclick="app.audiences.toggle_removed(this);"> </input>
+        <label for="hide-removed">&nbsp;Hide removed articles</label>
       </div>
     </div>
     <div id="articles_container">
