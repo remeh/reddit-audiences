@@ -54,7 +54,6 @@ CREATE TABLE "article" (
 CREATE TABLE "user" (
     "email" TEXT DEFAULT '',
     "hash" TEXT DEFAULT '',
-    "salt" TEXT DEFAULT '',
     "firstname" TEXT default '',
     "lastname" TEXT default ''
 );

@@ -5,11 +5,11 @@
       <div class="form-group">
         <form action="/signup" method="POST">
           Email
-          <input class="form-control" id="email" type="text" placeholder="mail@example.com" value="{{ .Email }}">
+          <input class="form-control" name="email" id="email" type="text" placeholder="mail@example.com" value="{{ .Email }}">
           Password 
-          <input class="form-control" id="password" type="password" placeholder="Password">
+          <input class="form-control" name="password" id="password" type="password" placeholder="Password">
           Confirm password 
-          <input class="form-control" id="passwordconfirm" type="password" placeholder="Confirm password">
+          <input class="form-control" name="passwordconfirm" id="passwordconfirm" type="password" placeholder="Confirm password">
           <div class="error">
             {{if .Error}}
             <p class="bg-danger" id="error">{{ .Error }}</p>
