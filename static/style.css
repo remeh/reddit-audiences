@@ -103,6 +103,14 @@ div.main-container {
   color: #aaaaaa;
 }
 
+.audiences .icon-rising {
+  color: #1ad52c;
+}
+
+.audiences .icon-minus {
+  color: #5791c2;
+}
+
 .audiences #articles_container {
   margin-top: 2em;
 }
@@ -115,10 +123,6 @@ div.main-container {
 
 .audiences .article:hover {
   background-color: white;
-}
-
-.audiences .icon-rising {
-  color: #1ad52c;
 }
 
 .audiences .col-header {

@@ -91,11 +91,11 @@ ready(function() {
       }
 
       if (data.highest_audience) {
-        highest = '' + data.highest_audience.audience + ' at ' + moment(new Date(data.highest_audience.crawl_time)).format('HH:mm a');
+        highest = '' + data.highest_audience.audience + ' on ' + moment(new Date(data.highest_audience.crawl_time)).format('Y-MM-DD') + ' at ' + moment(new Date(data.highest_audience.crawl_time)).format('HH:mm a');
       }
 
       if (data.lowest_audience) {
-        lowest = '' + data.lowest_audience.audience + ' at ' + moment(new Date(data.lowest_audience.crawl_time)).format('HH:mm a');
+        lowest = '' + data.lowest_audience.audience + ' on ' + moment(new Date(data.lowest_audience.crawl_time)).format('Y-MM-DD') + ' at ' + moment(new Date(data.lowest_audience.crawl_time)).format('HH:mm a');
       }
     }
 

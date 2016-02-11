@@ -66,7 +66,7 @@ func (c TodayHandler) getData(subreddit string) ([]app.Audience, map[string][]ap
 	var start, end time.Time
 
 	end = time.Now()
-	start = time.Date(end.Year(), end.Month(), end.Day(), 0, 0, 0, 0, end.Location())
+	start = time.Now().Add(-time.Hour * 36)
 
 	audiences, err := c.App.DB().FindAudiencesInterval(subreddit, start, end)
 	if err != nil {

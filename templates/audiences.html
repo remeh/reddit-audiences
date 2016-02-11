@@ -17,8 +17,8 @@
         <div class="col-lg-4">
         </div>
       <% } else { %>
-          <div class="col-lg-1 col-entry">
-            <% if (state == 'rising') { %>
+          <div class="col-lg-1 col-entry hint--bottom" data-hint='<% print( _.capitalize(state) ); %>'>
+          <% if (state == 'rising') { %>
               <i title="Rising" class="fa fa-caret-up icon-rising"> </i>
             <% } else if (state == 'falling') { %>
               <i title="Falling" class="fa fa-caret-down icon-falling"> </i>
@@ -27,14 +27,11 @@
             <% } else if (state == 'removed') { %>
               <i title="Removed" class="fa fa-times icon-removed"> </i>
             <% } else { %>
+              <i title="Stagnant" class="fa fa-minus icon-minus"> </i>
             <% } %>
           </div>
           <div class="col-lg-1 col-entry" title="Current rank">
-            <% if (current_rank > 20) { %>
-              >20
-            <% } else { %>
-              ${current_rank}
-            <% } %>
+            ${current_rank}
           </div>
           <div class="col-lg-1 col-entry" title="Highest rank">
             ${min_rank}
@@ -48,7 +45,8 @@
       <div class="row">
         <div class="col-lg-offset-10 col-lg-2 col-entry col-entry-small">
           <% if (first_seen) { %>
-            First seen at <% print(moment(new Date(first_seen)).format('HH:mm a')); %>
+            First seen on <% print(moment(new Date(first_seen)).format('Y-MM-DD')); %>
+            at <% print(moment(new Date(first_seen)).format('HH:mm a')); %>
           <% } %>
         </div>
       </div>
@@ -57,7 +55,7 @@
   </script>
   <div class="audiences container" id="app-data" data-subreddit="{{.Subreddit }}">
     <div class="row">
-      <h1><a href='https://reddit.com/r/{{.Subreddit}}' alt="Go to /r/{{.Subreddit}}">/r/{{ capitalize .Subreddit }}</a></h1>
+      <h1><a href='https://reddit.com/r/{{.Subreddit}}' alt="Go to /r/{{.Subreddit}}">/r/{{ capitalize .Subreddit }}</a><small> during the last 36 hours.</small></h1>
     </div>
     <div class="row">
       <div id="chart">
