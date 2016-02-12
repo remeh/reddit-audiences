@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/remeh/reddit-audiences/app"
+	"github.com/remeh/reddit-audiences/db"
 )
 
 type SignupGet struct {
@@ -30,6 +31,7 @@ func (c SignupGet) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (c SignupPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	t := c.App.Templates.Lookup("signup.html")
+	t_end := c.App.Templates.Lookup("signup_end.html")
 
 	// read parameters
 	// ----------------------
@@ -107,5 +109,19 @@ func (c SignupPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// ----------------------
 
 	// TODO(remy): store and response
-	w.Write([]byte(cryptedPassword))
+	user := db.User{
+		Email: email,
+	}
+
+	_, err = c.App.DB().InsertUser(user, cryptedPassword)
+	if err != nil {
+		w.WriteHeader(500)
+		t.Execute(w, signup{
+			Email: email,
+			Error: "An error occurred.",
+		})
+		log.Println("err: while creating an account for email:", email)
+	}
+
+	t_end.Execute(w, nil)
 }
