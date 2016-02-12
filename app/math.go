@@ -1,8 +1,12 @@
 package app
 
+import (
+	"github.com/remeh/reddit-audiences/db"
+)
+
 // Average computes the average in the given audiences.
 // Very basic algorithm.
-func Average(audiences []Audience) int64 {
+func Average(audiences []db.Audience) int64 {
 	var rv int64
 	for _, a := range audiences {
 		rv += int64(a.Audience)
@@ -17,8 +21,8 @@ func Average(audiences []Audience) int64 {
 
 // LowestHighest is a quick implementation retrieving the
 // lowest and the highest audience for the given slice of audiences.
-func LowestHighest(audiences []Audience) (Audience, Audience) {
-	var lowest, highest Audience
+func LowestHighest(audiences []db.Audience) (db.Audience, db.Audience) {
+	var lowest, highest db.Audience
 	lowest.Audience = 10E10
 
 	for _, a := range audiences {
@@ -40,9 +44,9 @@ func LowestHighest(audiences []Audience) (Audience, Audience) {
 	return lowest, highest
 }
 
-func ComputeArticleState(article Article, ranking []Ranking) ArticleState {
+func ComputeArticleState(article db.Article, ranking []db.Ranking) db.ArticleState {
 	if len(ranking) <= 2 {
-		return New
+		return db.New
 	}
 
 	increasing, decreasing := 0, 0
@@ -63,10 +67,10 @@ func ComputeArticleState(article Article, ranking []Ranking) ArticleState {
 	}
 
 	if increasing > decreasing {
-		return Rising
+		return db.Rising
 	} else if decreasing > increasing {
-		return Falling
+		return db.Falling
 	}
 
-	return Stagnant
+	return db.Stagnant
 }

@@ -1,6 +1,6 @@
 // Reddit audiences crawler
 // Rémy Mathieu © 2016
-package app
+package db
 
 import (
 	"database/sql"
@@ -89,8 +89,8 @@ const (
 	`
 )
 
-func (c *Conn) Init(config Config) error {
-	dbase, err := sql.Open("postgres", config.DB)
+func (c *Conn) Init(connString string) error {
+	dbase, err := sql.Open("postgres", connString)
 	if err != nil {
 		return err
 	}

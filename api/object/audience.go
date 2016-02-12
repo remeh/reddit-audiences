@@ -3,7 +3,7 @@ package object
 import (
 	"time"
 
-	"github.com/remeh/reddit-audiences/app"
+	"github.com/remeh/reddit-audiences/db"
 )
 
 type Audience struct {
@@ -11,7 +11,7 @@ type Audience struct {
 	Audience  int64     `json:"audience"`
 }
 
-func AudiencesFromApp(audiences []app.Audience) []Audience {
+func AudiencesFromApp(audiences []db.Audience) []Audience {
 	rv := make([]Audience, len(audiences))
 	for i, a := range audiences {
 		rv[i] = AudienceFromApp(a)
@@ -19,7 +19,7 @@ func AudiencesFromApp(audiences []app.Audience) []Audience {
 	return rv
 }
 
-func AudienceFromApp(audience app.Audience) Audience {
+func AudienceFromApp(audience db.Audience) Audience {
 	return Audience{
 		CrawlTime: audience.CrawlTime,
 		Audience:  audience.Audience,

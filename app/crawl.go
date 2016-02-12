@@ -12,6 +12,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/remeh/reddit-audiences/db"
+
 	"github.com/PuerkitoBio/goquery"
 )
 
@@ -92,7 +94,7 @@ func Feeder(a *App) {
 // the article infos from the DOM.
 // NOTE(remy): we stop as soon as we have a DOM error because
 // it has great chances that the full DOM is corrupted/not retrieved.
-func readDOMData(subreddit string) (int64, int64, []Article, error) {
+func readDOMData(subreddit string) (int64, int64, []db.Article, error) {
 	var audience int64
 	var subscribers int64
 	var err error
@@ -134,7 +136,7 @@ func readDOMData(subreddit string) (int64, int64, []Article, error) {
 	// ----------------------
 
 	now := time.Now()
-	articles := make([]Article, 0)
+	articles := make([]db.Article, 0)
 	s = doc.Find(".link").Each(func(i int, selec *goquery.Selection) {
 		l := selec.Find("p.title a.title")
 		title := l.First()
@@ -164,7 +166,7 @@ func readDOMData(subreddit string) (int64, int64, []Article, error) {
 			sticky = true
 		}
 
-		articles = append(articles, Article{
+		articles = append(articles, db.Article{
 			Subreddit:           subreddit,
 			ArticleId:           articleId,
 			ArticleTitle:        title.Text(),
@@ -184,7 +186,7 @@ func readDOMData(subreddit string) (int64, int64, []Article, error) {
 // storeArticles checks for each article if the
 // info isn't already present in database, if not,
 // it stores it. If changed, it also stores it.
-func storeArticles(a *App, articles []Article) error {
+func storeArticles(a *App, articles []db.Article) error {
 	if len(articles) == 0 {
 		return nil
 	}

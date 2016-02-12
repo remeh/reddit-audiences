@@ -10,6 +10,7 @@ import (
 
 	"github.com/remeh/reddit-audiences/api/object"
 	"github.com/remeh/reddit-audiences/app"
+	"github.com/remeh/reddit-audiences/db"
 
 	"github.com/gorilla/mux"
 )
@@ -62,7 +63,7 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (c TodayHandler) getData(subreddit string) ([]app.Audience, map[string][]app.Ranking, []app.Article, error) {
+func (c TodayHandler) getData(subreddit string) ([]db.Audience, map[string][]db.Ranking, []db.Article, error) {
 	var start, end time.Time
 
 	end = time.Now()

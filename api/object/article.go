@@ -6,20 +6,21 @@ import (
 	"time"
 
 	"github.com/remeh/reddit-audiences/app"
+	"github.com/remeh/reddit-audiences/db"
 )
 
 type Article struct {
-	ArticleId    string           `json:"id"`
-	ArticleTitle string           `json:"title"`
-	ArticleLink  string           `json:"link"`
-	State        app.ArticleState `json:"state"`
-	FirstSeen    *time.Time       `json:"first_seen,omitempty"`
-	Author       string           `json:"author"`
-	Promoted     bool             `json:"promoted"`
-	Sticky       bool             `json:"sticky"`
-	MinRank      int              `json:"min_rank"`
-	CurrentRank  int              `json:"current_rank"`
-	MaxRank      int              `json:"max_rank"`
+	ArticleId    string          `json:"id"`
+	ArticleTitle string          `json:"title"`
+	ArticleLink  string          `json:"link"`
+	State        db.ArticleState `json:"state"`
+	FirstSeen    *time.Time      `json:"first_seen,omitempty"`
+	Author       string          `json:"author"`
+	Promoted     bool            `json:"promoted"`
+	Sticky       bool            `json:"sticky"`
+	MinRank      int             `json:"min_rank"`
+	CurrentRank  int             `json:"current_rank"`
+	MaxRank      int             `json:"max_rank"`
 	//Ranking      []Ranking `json:"ranking"`
 }
 
@@ -29,7 +30,7 @@ func (r ByRank) Len() int           { return len(r) }
 func (r ByRank) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
 func (r ByRank) Less(i, j int) bool { return r[i].CurrentRank < r[j].CurrentRank }
 
-func ArticlesFromApp(articles []app.Article, rankings map[string][]app.Ranking) []Article {
+func ArticlesFromApp(articles []db.Article, rankings map[string][]db.Ranking) []Article {
 	rv := make([]Article, len(articles))
 	for i, a := range articles {
 		rv[i] = ArticleFromApp(a, rankings[a.ArticleId])
@@ -61,7 +62,7 @@ func (r ByRank) computeRemoved() {
 
 			if tested.CurrentRank == a.CurrentRank {
 				if tested.FirstSeen.Before(*a.FirstSeen) {
-					tested.State = app.Removed
+					tested.State = db.Removed
 					r[i] = tested
 					break
 				}
@@ -70,7 +71,7 @@ func (r ByRank) computeRemoved() {
 	}
 }
 
-func ArticleFromApp(article app.Article, ranking []app.Ranking) Article {
+func ArticleFromApp(article db.Article, ranking []db.Ranking) Article {
 	if ranking == nil {
 		return Article{}
 	}

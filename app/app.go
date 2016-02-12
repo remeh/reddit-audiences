@@ -8,12 +8,14 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/remeh/reddit-audiences/db"
+
 	"github.com/gorilla/mux"
 	"github.com/vrischmann/envconfig"
 )
 
 type App struct {
-	db        Conn
+	db        db.Conn
 	router    *mux.Router
 	Templates *template.Template
 	Config    Config
@@ -45,11 +47,11 @@ func (a *App) Init() {
 	}
 
 	// open pg connection
-	a.db.Init(a.Config)
+	a.db.Init(a.Config.DB)
 }
 
 // DB opens a connection to PostgreSQL.
-func (a *App) DB() Conn {
+func (a *App) DB() db.Conn {
 	return a.db
 }
 

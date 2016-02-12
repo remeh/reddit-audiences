@@ -1,4 +1,4 @@
-package app
+package db
 
 import (
 	"time"
@@ -39,4 +39,10 @@ type Ranking struct {
 	ArticleId string
 	CrawlTime time.Time
 	Rank      int
+}
+
+type User struct {
+	Email     string
+	Firstname string
+	Lastname  string
 }
