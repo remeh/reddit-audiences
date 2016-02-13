@@ -14,9 +14,9 @@ type TemplateParams struct {
 	User app.User
 }
 
-func templateParams(conn db.Conn, r *http.Request) TemplateParams {
+func tmplParams(app *app.App, r *http.Request) TemplateParams {
 	return TemplateParams{
-		User: GetUser(conn, r),
+		User: GetUser(app.DB(), r),
 	}
 }
 
