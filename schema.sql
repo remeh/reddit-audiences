@@ -71,7 +71,7 @@ CREATE UNIQUE INDEX ON "user" ("email");
 CREATE TABLE "session" (
     "token" TEXT DEFAULT '',
     "uuid" TEXT DEFAULT '',
-    "creation_time" TIMESTAMP WITH TIME ZONE
+    "hit_time" TIMESTAMP WITH TIME ZONE
 );
 
 CREATE UNIQUE INDEX ON "session" ("token");

@@ -4,6 +4,7 @@ package db
 
 import (
 	"database/sql"
+	"log"
 	"time"
 )
 
@@ -17,7 +18,7 @@ const (
 
 	INSERT_SESSION = `
 		INSERT INTO "session"
-		("token", "uuid", "creation_time")
+		("token", "uuid", "hit_time")
 		VALUES
 		($1, $2, $3)
 	`
@@ -33,6 +34,12 @@ const (
 		FROM "user"
 		JOIN "session" ON "session"."uuid" = "user"."uuid" AND "session"."token" = $1
 	`
+
+	UPDATE_SESSION = `
+		UPDATE "session"
+		SET "hit_time" = $1
+		WHERE "token" = $2
+	`
 )
 
 func (c Conn) InsertUser(user User, hash string) (sql.Result, error) {
@@ -40,7 +47,7 @@ func (c Conn) InsertUser(user User, hash string) (sql.Result, error) {
 }
 
 func (c Conn) InsertSession(session Session) error {
-	_, err := c.db.Exec(INSERT_SESSION, session.Token, session.User.Uuid, session.CreationTime)
+	_, err := c.db.Exec(INSERT_SESSION, session.Token, session.User.Uuid, session.HitTime)
 	return err
 }
 
@@ -60,6 +67,12 @@ func (c Conn) ExistingEmail(email string) (bool, error) {
 		return true, nil
 	}
 	return false, nil
+}
+
+func (c Conn) UpdateSession(token string) {
+	if _, err := c.db.Exec(UPDATE_SESSION, time.Now(), token); err != nil {
+		log.Printf("err: while updating the session '%s': %s'", token, err.Error())
+	}
 }
 
 func (c Conn) GetUserFromSessionToken(token string) (User, error) {

@@ -36,7 +36,7 @@ func (c Audiences) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	t = t.Funcs(app.TemplateHelpers())
 
 	t.Execute(w, audiencesParams{
-		TemplateParams: templateParams(GetUser(c.App.DB(), r)),
+		TemplateParams: templateParams(c.App.DB(), r),
 		Subreddit:      subreddit,
 	})
 }

@@ -26,9 +26,9 @@ func CreateSession(conn db.Conn, user db.User, creationTime time.Time) (db.Sessi
 	}
 
 	session := db.Session{
-		Token:        uuid.New(),
-		User:         user,
-		CreationTime: creationTime,
+		Token:   uuid.New(),
+		User:    user,
+		HitTime: creationTime,
 	}
 
 	err := conn.InsertSession(session)

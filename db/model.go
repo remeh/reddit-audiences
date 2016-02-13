@@ -51,7 +51,7 @@ type User struct {
 }
 
 type Session struct {
-	Token        string
-	User         User
-	CreationTime time.Time
+	Token   string
+	User    User
+	HitTime time.Time
 }

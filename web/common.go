@@ -14,9 +14,9 @@ type TemplateParams struct {
 	User app.User
 }
 
-func templateParams(u app.User) TemplateParams {
+func templateParams(conn db.Conn, r *http.Request) TemplateParams {
 	return TemplateParams{
-		User: u,
+		User: GetUser(conn, r),
 	}
 }
 
@@ -37,6 +37,8 @@ func GetUser(conn db.Conn, r *http.Request) app.User {
 		log.Printf("err: while getting an user from the session ID '%s': %s", sessionToken, err.Error())
 		return app.User{}
 	}
+
+	conn.UpdateSession(sessionToken)
 
 	return app.User{
 		Email:     user.Email,

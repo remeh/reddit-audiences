@@ -14,6 +14,10 @@ type Index struct {
 	App *app.App
 }
 
+type indexParams struct {
+	TemplateParams
+}
+
 func (c Index) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	t := c.App.Templates.Lookup("index.html")
 
@@ -24,5 +28,7 @@ func (c Index) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		// TODO(remy): redirect to somewhere to enter the subreddit
 	}
 
-	t.Execute(w, nil)
+	t.Execute(w, indexParams{
+		templateParams(c.App.DB(), r),
+	})
 }
