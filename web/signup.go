@@ -1,12 +1,17 @@
+// Reddit audiences crawler
+// Rémy Mathieu © 2016
 package web
 
 import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/remeh/reddit-audiences/app"
 	"github.com/remeh/reddit-audiences/db"
+
+	"github.com/pborman/uuid"
 )
 
 type SignupGet struct {
@@ -91,6 +96,22 @@ func (c SignupPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if exists, err := c.App.DB().ExistingEmail(email); err != nil {
+		w.WriteHeader(500)
+		t.Execute(w, signup{
+			Email: email,
+			Error: "An error occurred.",
+		})
+		log.Println("err: while crypting a password:", err.Error())
+	} else if exists {
+		w.WriteHeader(400)
+		t.Execute(w, signup{
+			Email: email,
+			Error: "Existing email.",
+		})
+		return
+	}
+
 	// crypt the password
 	// ----------------------
 
@@ -108,9 +129,12 @@ func (c SignupPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// store the new user
 	// ----------------------
 
-	// TODO(remy): store and response
+	now := time.Now()
 	user := db.User{
-		Email: email,
+		Uuid:         uuid.New(),
+		Email:        email,
+		CreationTime: now,
+		LastLogin:    now,
 	}
 
 	_, err = c.App.DB().InsertUser(user, cryptedPassword)
@@ -120,8 +144,25 @@ func (c SignupPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			Email: email,
 			Error: "An error occurred.",
 		})
-		log.Println("err: while creating an account for email:", email)
+		log.Printf("err: while creating an account for email '%s': %s", email, err.Error())
+		return
 	}
+
+	// create the session and send the cookies.
+	// ----------------------
+	session, err := app.CreateSession(c.App.DB(), user, now)
+	if err != nil {
+		w.WriteHeader(500)
+		t.Execute(w, signup{
+			Email: email,
+			Error: "An error occurred.",
+		})
+		log.Printf("err: while creating a session for email '%s': %s", email, err.Error())
+		return
+	}
+
+	// set cookie
+	app.SetSessionCookie(w, session)
 
 	t_end.Execute(w, nil)
 }

@@ -49,11 +49,30 @@ CREATE TABLE "article" (
     "sticky" BOOLEAN DEFAULT false
 );
 
+CREATE INDEX ON "article" ("subreddit", "crawl_time");
+
 -- user
 
 CREATE TABLE "user" (
+    "uuid" TEXT DEFAULT '',
     "email" TEXT DEFAULT '',
     "hash" TEXT DEFAULT '',
     "firstname" TEXT default '',
-    "lastname" TEXT default ''
+    "lastname" TEXT default '',
+    "creation_time" TIMESTAMP WITH TIME ZONE,
+    "last_login" TIMESTAMP WITH TIME ZONE
 );
+
+CREATE UNIQUE INDEX ON "user" ("uuid");
+CREATE UNIQUE INDEX ON "user" ("email");
+
+-- session
+
+CREATE TABLE "session" (
+    "token" TEXT DEFAULT '',
+    "uuid" TEXT DEFAULT '',
+    "creation_time" TIMESTAMP WITH TIME ZONE
+);
+
+CREATE UNIQUE INDEX ON "session" ("token");
+ALTER TABLE "session" ADD FOREIGN KEY ("uuid") REFERENCES "user" ("uuid");

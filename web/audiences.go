@@ -1,3 +1,5 @@
+// Reddit audiences crawler
+// Rémy Mathieu © 2016
 package web
 
 import (
@@ -13,7 +15,8 @@ type Audiences struct {
 	App *app.App
 }
 
-type audiencesBody struct {
+type audiencesParams struct {
+	TemplateParams
 	Subreddit string
 }
 
@@ -32,7 +35,8 @@ func (c Audiences) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	t = t.Funcs(app.TemplateHelpers())
 
-	t.Execute(w, audiencesBody{
-		Subreddit: subreddit,
+	t.Execute(w, audiencesParams{
+		TemplateParams: templateParams(GetUser(c.App.DB(), r)),
+		Subreddit:      subreddit,
 	})
 }

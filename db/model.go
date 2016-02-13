@@ -42,7 +42,16 @@ type Ranking struct {
 }
 
 type User struct {
-	Email     string
-	Firstname string
-	Lastname  string
+	Uuid         string
+	Email        string
+	Firstname    string
+	Lastname     string
+	CreationTime time.Time
+	LastLogin    time.Time
+}
+
+type Session struct {
+	Token        string
+	User         User
+	CreationTime time.Time
 }
