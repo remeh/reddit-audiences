@@ -26,7 +26,15 @@
         <div class="col-lg-offset-6 col-lg-2">
           <ul class="nav nav-pills">
             <li role="presentation" class="active"><a href="/">Home</a></li>
-            <li role="presentation"><a href="/signup">Sign up</a></li>
+            {{ with .TemplateParams.User}}
+              {{ if ne .Email "" }}
+                <li role="presentation"><a href="/signup">Your account</a></li>
+              {{else}}
+                <li role="presentation"><a href="/signup">Sign up</a></li>
+              {{end}}
+            {{else}}
+              <li role="presentation"><a href="/signup">Sign up</a></li>
+            {{end}}
           </ul>
         </div>
       </div>

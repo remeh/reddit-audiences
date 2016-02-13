@@ -23,14 +23,13 @@ type SignupPost struct {
 }
 
 type signupParams struct {
+	TemplateParams
 	Email string
 	Error string
 }
 
 func (c SignupGet) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	t := c.App.Templates.Lookup("signup.html")
-
-	t = t.Funcs(app.TemplateHelpers())
 	t.Execute(w, signupParams{})
 }
 
@@ -164,5 +163,9 @@ func (c SignupPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// set cookie
 	app.SetSessionCookie(w, session)
 
-	t_end.Execute(w, nil)
+	p := signupParams{
+		TemplateParams: TemplateParams{User: app.User{Email: email}},
+	}
+
+	t_end.Execute(w, p)
 }
