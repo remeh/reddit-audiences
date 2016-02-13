@@ -19,15 +19,15 @@
       <% } else { %>
           <div class="col-lg-1 col-entry hint--bottom" data-hint='<% print( _.capitalize(state) ); %>'>
           <% if (state == 'rising') { %>
-              <i title="Rising" class="fa fa-caret-up icon-rising"> </i>
+              <i class="fa fa-caret-up icon-rising"> </i>
             <% } else if (state == 'falling') { %>
-              <i title="Falling" class="fa fa-caret-down icon-falling"> </i>
+              <i class="fa fa-caret-down icon-falling"> </i>
             <% } else if (state == 'new') { %>
-              <i title="New" class="fa fa-plus icon-new"> </i>
+              <i class="fa fa-plus icon-new"> </i>
             <% } else if (state == 'removed') { %>
-              <i title="Removed" class="fa fa-times icon-removed"> </i>
+              <i class="fa fa-times icon-removed"> </i>
             <% } else { %>
-              <i title="Stagnant" class="fa fa-minus icon-minus"> </i>
+              <i class="fa fa-minus icon-minus"> </i>
             <% } %>
           </div>
           <div class="col-lg-1 col-entry" title="Current rank">
