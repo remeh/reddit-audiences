@@ -53,6 +53,10 @@ func (r ByRank) computeRemoved() {
 		if tested.FirstSeen == nil {
 			continue
 		}
+		// ignore sticky and promoted ones.
+		if tested.Sticky || tested.Promoted {
+			continue
+		}
 
 		for _, a := range r {
 			if a.CurrentRank > tested.CurrentRank {
