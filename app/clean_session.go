@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	SESSION_EXPIRATION = "2m"
+	SESSION_EXPIRATION = "60m"
 )
 
 func StartCleanSessionsJob(a *App) {
