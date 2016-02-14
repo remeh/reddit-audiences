@@ -217,7 +217,9 @@ func getSubredditPage(url string) (*goquery.Document, error) {
 		return nil, err
 	}
 
-	client := http.Client{}
+	client := http.Client{
+		Timeout: time.Second * 10,
+	}
 	resp, err := client.Do(r)
 
 	if err != nil {
