@@ -56,8 +56,8 @@ func (a *App) DB() db.Conn {
 }
 
 func (a *App) StartJobs() {
-	StartCrawlingJob(a)
-	StartCleanSessionsJob(a)
+	go StartCrawlingJob(a)
+	go StartCleanSessionsJob(a)
 }
 
 // Server

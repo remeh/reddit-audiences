@@ -11,7 +11,7 @@ import (
 func main() {
 	var a app.App
 	a.Init()
-	go a.StartJobs()
+	a.StartJobs()
 
 	declareWebRoutes(&a)
 	declareApiRoutes(&a)
