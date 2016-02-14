@@ -21,7 +21,7 @@ const (
 				AND
 				"crawl_time" <= $3
 		) sub_query
-		ORDER BY sub_query.rank
+		ORDER BY sub_query.rank, crawl_time DESC
 	`
 	ARTICLES_RANKING = `
 		SELECT "rank", "article_id", "crawl_time"

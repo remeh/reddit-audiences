@@ -40,6 +40,11 @@ const (
 		SET "hit_time" = $1
 		WHERE "token" = $2
 	`
+
+	DELETE_EXPIRED_SESSIONS = `
+		DELETE FROM "session"
+		WHERE "hit_time" < $1
+	`
 )
 
 func (c Conn) InsertUser(user User, hash string) (sql.Result, error) {
@@ -67,6 +72,10 @@ func (c Conn) ExistingEmail(email string) (bool, error) {
 		return true, nil
 	}
 	return false, nil
+}
+
+func (c Conn) DeleteExpiredSessions(sessionExpiration time.Duration) (sql.Result, error) {
+	return c.db.Exec(DELETE_EXPIRED_SESSIONS, time.Now().Add(-sessionExpiration))
 }
 
 func (c Conn) UpdateSession(token string) {
