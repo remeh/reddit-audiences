@@ -13,12 +13,12 @@ type Index struct {
 }
 
 type indexParams struct {
-	TemplateParams
+	app.TemplateParams
 }
 
 func (c Index) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	t := c.App.Templates.Lookup("index.html")
 	t.Execute(w, indexParams{
-		tmplParams(c.App, r),
+		app.TmplParams(c.App, r),
 	})
 }

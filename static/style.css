@@ -148,6 +148,27 @@ div.main-container {
   text-align: center;
 }
 
+.audiences select.time-selector {
+  font-size: 0.7em;
+  margin-left: 5px;
+  padding-left: 4px;
+}
+
+.audiences div#demomessage {
+  margin-top: 1em;
+}
+
+.audiences p.demo-message {
+  background-color: #eeeeee;
+  padding: 2em;
+}
+
+.audiences p.demo-message i {
+  color: #ddd;
+  padding-right: 1em;
+  font-size: 1.5em;
+}
+
 footer {
   padding: 1em;
   padding-top: 2em;

@@ -4,6 +4,7 @@ package app
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -37,4 +38,45 @@ func CreateSession(conn db.Conn, user db.User, creationTime time.Time) (db.Sessi
 
 func SetSessionCookie(w http.ResponseWriter, session db.Session) {
 	w.Header().Set("Set-Cookie", fmt.Sprintf("t=%s", session.Token))
+}
+
+// ----------------------
+
+type TemplateParams struct {
+	User User
+}
+
+func TmplParams(app *App, r *http.Request) TemplateParams {
+	return TemplateParams{
+		User: GetUser(app.DB(), r),
+	}
+}
+
+// ----------------------
+
+func GetUser(conn db.Conn, r *http.Request) User {
+	if r == nil {
+		return User{}
+	}
+
+	cookie, err := r.Cookie("t")
+	if err != nil {
+		return User{}
+	}
+
+	sessionToken := cookie.Value
+
+	user, err := conn.GetUserFromSessionToken(sessionToken)
+	if err != nil {
+		log.Printf("err: while getting an user from the session ID '%s': %s", sessionToken, err.Error())
+		return User{}
+	}
+
+	conn.UpdateSession(sessionToken)
+
+	return User{
+		Email:     user.Email,
+		Firstname: user.Firstname,
+		Lastname:  user.Lastname,
+	}
 }

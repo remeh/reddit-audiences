@@ -5,8 +5,15 @@ ready(function() {
 
   audiences.templates = {};
 
-  audiences.draw = function(subreddit) {
-    app.json('/api/today/' + subreddit, 'GET', this.on_receive_audience, this.on_error);
+  audiences.draw = function(subreddit, duration) {
+    var t = '';
+    if (duration && duration.length > 0) {
+      t = '?t=36h';
+      if (duration === '7d') {
+        t = '?t=7d';
+      }
+    }
+    app.json('/api/today/' + subreddit + t, 'GET', this.on_receive_audience, this.on_error);
   };
 
   audiences.on_error = function(request) {
@@ -44,8 +51,10 @@ ready(function() {
     audiences.update_labels(data);
 
     // articles
+    // NOTE(remy): should use d3 to append data
     // ---------------------- 
 
+    d3.select('#articles_container').html(''); // remove previous articles
     var articles_container = document.getElementById('articles_container');
 
     for (var i = 0; i < data.articles.length; i++) {
@@ -58,6 +67,23 @@ ready(function() {
     if (document.getElementById('hide-removed').checked) {
       audiences.toggle_visibility(false);
     }
+
+    // show demo mode message ?
+    // ----------------------
+    demo_mode_msg = document.getElementById("demomessage");
+    if (demo_mode_msg) {
+      if (data.demo_mode_message) {
+        // show
+        demo_mode_msg.style.display = '';
+        // force selection of 36h
+        var time = document.getElementById('time');
+        if (time) {
+          time.selectedIndex = 0;
+        }
+      } else {
+        demo_mode_msg.style.display = 'none';
+      }
+    }
   };
 
   audiences.toggle_removed = function(checkbox) {
@@ -66,6 +92,19 @@ ready(function() {
     } else {
       audiences.toggle_visibility(true);
     }
+  };
+
+  audiences.on_time_selection_change = function(event) {
+    if (!event) {
+      return;
+    }
+
+    t = undefined;
+    if (event.target.selectedIndex == 1) {
+      t = '7d';
+    }
+    // retrieves and display the data
+    audiences.draw(subreddit, t);
   };
 
   audiences.toggle_visibility = function(show) {
@@ -105,6 +144,10 @@ ready(function() {
   };
 
   audiences.draw_graph = function(data, domNodeSelector) {
+    // clear previous content
+    d3.select(domNodeSelector).html('');
+
+    // create the graph
     nv.addGraph(function() {
       var chart = nv.models.lineChart()
                     .options({

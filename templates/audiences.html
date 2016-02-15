@@ -54,8 +54,21 @@
     </div>
   </script>
   <div class="audiences container" id="app-data" data-subreddit="{{.Subreddit }}">
+    <div class="row" id="demomessage" style="display: none;">
+      <p class="demo-message">
+        <i class="fa fa-info"></i> You're in demo mode. Please <a href="/signup" title="Create an account">create an account</a> to access to more features such as
+        7 days statistics and graphs annotation.
+      </p>
+    </div>
     <div class="row">
-      <h1><a href='https://reddit.com/r/{{.Subreddit}}' alt="Go to /r/{{.Subreddit}}">/r/{{ capitalize .Subreddit }}</a><small> during the last 36 hours.</small></h1>
+      <h1>
+        <a href='https://reddit.com/r/{{.Subreddit}}' alt="Go to /r/{{.Subreddit}}">/r/{{ capitalize .Subreddit }}</a>
+        <small> during the last </small>
+        <select onchange="app.audiences.on_time_selection_change(event);" class="time-selector" id="time">
+          <option value="36h" selected>36 hours</option>
+          <option value="7d">7 days</option>
+        </select>
+      </h1>
     </div>
     <div class="row">
       <div id="chart">

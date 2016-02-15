@@ -16,7 +16,7 @@ type Audiences struct {
 }
 
 type audiencesParams struct {
-	TemplateParams
+	app.TemplateParams
 	Subreddit string
 }
 
@@ -34,7 +34,7 @@ func (c Audiences) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	t.Execute(w, audiencesParams{
-		TemplateParams: tmplParams(c.App, r),
+		TemplateParams: app.TmplParams(c.App, r),
 		Subreddit:      subreddit,
 	})
 }

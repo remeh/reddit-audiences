@@ -28,7 +28,7 @@ function onReady() {
         }
       };
       request.send();
-  }
+  };
 
   app.data = function(field) {
     if (!field) {
@@ -49,7 +49,7 @@ function onReady() {
     }
 
     return res;
-  }
+  };
 
   window.app = app;
 }
