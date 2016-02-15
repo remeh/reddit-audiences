@@ -42,18 +42,6 @@ func SetSessionCookie(w http.ResponseWriter, session db.Session) {
 
 // ----------------------
 
-type TemplateParams struct {
-	User User
-}
-
-func TmplParams(app *App, r *http.Request) TemplateParams {
-	return TemplateParams{
-		User: GetUser(app.DB(), r),
-	}
-}
-
-// ----------------------
-
 func GetUser(conn db.Conn, r *http.Request) User {
 	if r == nil {
 		return User{}

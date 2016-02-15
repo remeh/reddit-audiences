@@ -2,8 +2,29 @@ package app
 
 import (
 	"html/template"
+	"net/http"
 	"strings"
 )
+
+type Params struct {
+	// Name of the current page, not always set
+	Page string
+	// LoggedIn is set to true when the current user
+	// is logged in.
+	LoggedIn bool
+	User     User
+}
+
+func TmplParams(app *App, r *http.Request, page string) Params {
+	user := GetUser(app.DB(), r)
+	return Params{
+		Page:     page,
+		LoggedIn: len(user.Email) > 0,
+		User:     user,
+	}
+}
+
+// ----------------------
 
 func TemplateHelpers() template.FuncMap {
 	return template.FuncMap{

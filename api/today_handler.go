@@ -43,7 +43,7 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// ensure the right to retrieve more than 36h
 	// ----------------------
-	tmplParams := app.TmplParams(c.App, r)
+	tmplParams := app.TmplParams(c.App, r, "ApiToday")
 
 	demoModeMessage := false
 	if len(t) > 0 && t != "36h" && len(tmplParams.User.Email) == 0 {

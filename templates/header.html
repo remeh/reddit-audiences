@@ -25,15 +25,14 @@
         </div>
         <div class="col-lg-offset-6 col-lg-2">
           <ul class="nav nav-pills">
+            {{if ne .Params.Page "Index"}}
             <li role="presentation" class="active"><a href="/">Home</a></li>
-            {{ with .TemplateParams.User}}
-              {{ if ne .Email "" }}
-                <li role="presentation"><a href="/signup">Your account</a></li>
-              {{else}}
-                <li role="presentation"><a href="/signup">Sign up</a></li>
-              {{end}}
+            {{end}}
+            {{if .Params.LoggedIn}}
+              <li role="presentation"><a href="/signup">Your account</a></li>
             {{else}}
               <li role="presentation"><a href="/signup">Sign up</a></li>
+              <li role="presentation"><a href="/signin">Sign in</a></li>
             {{end}}
           </ul>
         </div>
