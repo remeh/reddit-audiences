@@ -23,13 +23,14 @@
         <div class="col-lg-4">
           <a href="/" alt="Back to homepage"><h1 class="main-title">Reddit Audiences</h1></a>
         </div>
-        <div class="col-lg-offset-6 col-lg-2">
+        <div class="col-lg-offset-5 col-lg-3">
           <ul class="nav nav-pills">
             {{if ne .Params.Page "Index"}}
             <li role="presentation" class="active"><a href="/">Home</a></li>
             {{end}}
             {{if .Params.LoggedIn}}
               <li role="presentation"><a href="/account">Your account</a></li>
+              <li role="presentation"><a href="/logout">Logout</a></li>
             {{else}}
               <li role="presentation"><a href="/register">Register</a></li>
               <li role="presentation"><a href="/signin">Sign in</a></li>

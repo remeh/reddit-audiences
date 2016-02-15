@@ -25,6 +25,11 @@ func declareWebRoutes(a *app.App) {
 	a.Add("/register", web.RegisterGet{a}, "GET")
 	a.Add("/register", web.RegisterPost{a}, "POST")
 
+	a.Add("/signin", web.SigninGet{a}, "GET")
+	a.Add("/signin", web.SigninPost{a}, "POST")
+
+	a.Add("/logout", web.Logout{a}, "GET")
+
 	a.Add("/index", web.Index{a}, "GET")
 	a.Add("/", web.Index{a}, "GET")
 }

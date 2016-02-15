@@ -37,7 +37,12 @@ func CreateSession(conn db.Conn, user db.User, creationTime time.Time) (db.Sessi
 }
 
 func SetSessionCookie(w http.ResponseWriter, session db.Session) {
-	w.Header().Set("Set-Cookie", fmt.Sprintf("t=%s", session.Token))
+	cookie := &http.Cookie{
+		Name:   "t",
+		Value:  session.Token,
+		MaxAge: 86400, // 1 day
+	}
+	http.SetCookie(w, cookie)
 }
 
 // ----------------------

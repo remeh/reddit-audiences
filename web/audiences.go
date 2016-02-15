@@ -29,7 +29,7 @@ func (c Audiences) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// test if known subreddit
 	subreddit = strings.ToLower(strings.Trim(subreddit, " "))
 	if len(subreddit) == 0 {
-		http.Redirect(w, r, "/", 301)
+		http.Redirect(w, r, "/", 302)
 		return
 	}
 

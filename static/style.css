@@ -3,10 +3,6 @@ body {
   background-color: #f5f5f5;
 }
 
-.btn:hover {
-  margin-top: 0px;
-}
-
 header {
   padding: 0.5em;
   width: 100%;
@@ -188,6 +184,22 @@ footer {
 
 footer span.extra {
   font-size: 0.8em;
+}
+
+/* signin */
+
+div.signin {
+  width: 400px;
+  text-align: center;
+}
+
+.signin div.error {
+  margin-top: 1.5em;
+}
+
+.signin #error {
+  padding: 0.5em;
+  font-size: 1.0em;
 }
 
 /* register */
