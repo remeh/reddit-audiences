@@ -22,8 +22,8 @@ func declareWebRoutes(a *app.App) {
 	// Finally index
 	a.Add("/audiences/{subreddit}", web.Audiences{a}, "GET")
 
-	a.Add("/signup", web.SignupGet{a}, "GET")
-	a.Add("/signup", web.SignupPost{a}, "POST")
+	a.Add("/register", web.RegisterGet{a}, "GET")
+	a.Add("/register", web.RegisterPost{a}, "POST")
 
 	a.Add("/index", web.Index{a}, "GET")
 	a.Add("/", web.Index{a}, "GET")

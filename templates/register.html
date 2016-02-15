@@ -1,0 +1,24 @@
+{{template "header.html" .}}
+  <div class="register container main-container">
+    <div class="jumbotron">
+      <h1>Register</h1>
+      <div class="form-group">
+        <form action="/register" method="POST">
+          Email
+          <input class="form-control" name="email" id="email" type="text" placeholder="mail@example.com" value="{{ .Email }}">
+          Password 
+          <input class="form-control" name="password" id="password" type="password" placeholder="Password">
+          Confirm password 
+          <input class="form-control" name="passwordconfirm" id="passwordconfirm" type="password" placeholder="Confirm password">
+          <div class="error">
+            {{if .Error}}
+            <p class="bg-danger" id="error">{{ .Error }}</p>
+            {{end}}
+          </div>
+          <input class="form-control btn btn-primary" type="submit" value="Sign up">
+        </form>
+      </div>
+    </div>
+  </div>
+{{template "footer.html"}}
+

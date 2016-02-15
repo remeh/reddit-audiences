@@ -14,28 +14,28 @@ import (
 	"github.com/pborman/uuid"
 )
 
-type SignupGet struct {
+type RegisterGet struct {
 	App *app.App
 }
 
-type SignupPost struct {
+type RegisterPost struct {
 	App *app.App
 }
 
-type signupParams struct {
+type registerParams struct {
 	app.Params
 	Email string
 	Error string
 }
 
-func (c SignupGet) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	t := c.App.Templates.Lookup("signup.html")
-	t.Execute(w, signupParams{})
+func (c RegisterGet) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	t := c.App.Templates.Lookup("register.html")
+	t.Execute(w, registerParams{})
 }
 
-func (c SignupPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	t := c.App.Templates.Lookup("signup.html")
-	t_end := c.App.Templates.Lookup("signup_end.html")
+func (c RegisterPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	t := c.App.Templates.Lookup("register.html")
+	t_end := c.App.Templates.Lookup("register_end.html")
 
 	// read parameters
 	// ----------------------
@@ -52,7 +52,7 @@ func (c SignupPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		!strings.Contains(email, ".") ||
 		!strings.Contains(email, "@") {
 		w.WriteHeader(400)
-		t.Execute(w, signupParams{
+		t.Execute(w, registerParams{
 			Email: email,
 			Error: "Please fill a valid email.",
 		})
@@ -61,7 +61,7 @@ func (c SignupPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if len(password) == 0 {
 		w.WriteHeader(400)
-		t.Execute(w, signupParams{
+		t.Execute(w, registerParams{
 			Email: email,
 			Error: "Please fill a password.",
 		})
@@ -70,7 +70,7 @@ func (c SignupPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if len(passwordconfirm) == 0 {
 		w.WriteHeader(400)
-		t.Execute(w, signupParams{
+		t.Execute(w, registerParams{
 			Email: email,
 			Error: "Please confirm your password.",
 		})
@@ -79,7 +79,7 @@ func (c SignupPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if password != passwordconfirm {
 		w.WriteHeader(400)
-		t.Execute(w, signupParams{
+		t.Execute(w, registerParams{
 			Email: email,
 			Error: "Password confirmation doesn't match.",
 		})
@@ -88,7 +88,7 @@ func (c SignupPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if !app.IsPasswordSecure(password) {
 		w.WriteHeader(400)
-		t.Execute(w, signupParams{
+		t.Execute(w, registerParams{
 			Email: email,
 			Error: "The given password isn't strong enough.",
 		})
@@ -97,14 +97,14 @@ func (c SignupPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if exists, err := c.App.DB().ExistingEmail(email); err != nil {
 		w.WriteHeader(500)
-		t.Execute(w, signupParams{
+		t.Execute(w, registerParams{
 			Email: email,
 			Error: "An error occurred.",
 		})
 		log.Println("err: while crypting a password:", err.Error())
 	} else if exists {
 		w.WriteHeader(400)
-		t.Execute(w, signupParams{
+		t.Execute(w, registerParams{
 			Email: email,
 			Error: "Existing email.",
 		})
@@ -117,7 +117,7 @@ func (c SignupPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	cryptedPassword, err := app.CryptPassword(password)
 	if err != nil {
 		w.WriteHeader(500)
-		t.Execute(w, signupParams{
+		t.Execute(w, registerParams{
 			Email: email,
 			Error: "An error occurred.",
 		})
@@ -139,7 +139,7 @@ func (c SignupPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	_, err = c.App.DB().InsertUser(user, cryptedPassword)
 	if err != nil {
 		w.WriteHeader(500)
-		t.Execute(w, signupParams{
+		t.Execute(w, registerParams{
 			Email: email,
 			Error: "An error occurred.",
 		})
@@ -152,7 +152,7 @@ func (c SignupPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	session, err := app.CreateSession(c.App.DB(), user, now)
 	if err != nil {
 		w.WriteHeader(500)
-		t.Execute(w, signupParams{
+		t.Execute(w, registerParams{
 			Email: email,
 			Error: "An error occurred.",
 		})
@@ -163,8 +163,11 @@ func (c SignupPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// set cookie
 	app.SetSessionCookie(w, session)
 
-	p := signupParams{
-		Params: app.Params{User: app.User{Email: email}},
+	p := registerParams{
+		Params: app.Params{
+			LoggedIn: true,
+			User:     app.User{Email: email},
+		},
 	}
 
 	t_end.Execute(w, p)
