@@ -1,0 +1,10 @@
+{{template "header.html" .}}
+  <div class="index container main-container">
+    <div class="jumbotron">
+      <h2>Your account</h2>
+      <p>{{ .Params.User.Firstname }} {{ .Params.User.Lastname }}</p>
+    </div>
+  </div>
+  <script type="text/javascript" src="/index.js"></script>
+{{template "footer.html"}}
+
