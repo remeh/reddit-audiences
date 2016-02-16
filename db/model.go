@@ -34,6 +34,13 @@ type Article struct {
 	Sticky              bool
 }
 
+type Annotation struct {
+	Owner     string
+	Subreddit string
+	Message   string
+	Time      time.Time
+}
+
 type Ranking struct {
 	Subreddit string
 	ArticleId string

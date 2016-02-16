@@ -23,6 +23,16 @@ const (
 		) sub_query
 		ORDER BY sub_query.rank, crawl_time DESC
 	`
+	FIND_ANNOTATIONS = `
+		SELECT "owner", "subreddit", "time", "message"
+		FROM "annotation"
+		WHERE 
+			"subreddit" = $1
+			AND
+			"owner" = $2
+			AND
+			"time" >= $3
+	`
 	ARTICLES_RANKING = `
 		SELECT "rank", "article_id", "crawl_time"
 		FROM "article"
@@ -53,6 +63,39 @@ const (
 		($1, $2, $3, $4)
 	`
 )
+
+func (c Conn) FindAnnotations(subreddit, owner string, after time.Time) ([]Annotation, error) {
+	rv := make([]Annotation, 0)
+
+	r, err := c.db.Query(FIND_ANNOTATIONS, subreddit, owner, after)
+	if err != nil {
+		return rv, err
+	}
+
+	if r == nil {
+		return rv, nil
+	}
+
+	defer r.Close()
+
+	for r.Next() {
+		var subreddit, owner, message string
+		var t time.Time
+
+		if err := r.Scan(&subreddit, &owner, &t, &message); err != nil {
+			return rv, err
+		}
+
+		rv = append(rv, Annotation{
+			Subreddit: subreddit,
+			Owner:     owner,
+			Time:      t,
+			Message:   message,
+		})
+	}
+
+	return rv, nil
+}
 
 func (c Conn) FindArticles(subreddit string, start, end time.Time) ([]Article, error) {
 	rv := make([]Article, 0)

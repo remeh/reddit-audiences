@@ -17,7 +17,11 @@ function onReady() {
     request.open(method, route, true);
     request.onload = function() {
         if (request.status >= 200 && request.status < 400) {
-          var data = JSON.parse(request.responseText);
+          var data = {};
+          if (request.responseText &&
+              request.responseText.length > 0) {
+            var data = JSON.parse(request.responseText);
+          }
           success(request, data);
         } else {
           if (error) {

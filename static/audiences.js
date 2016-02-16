@@ -175,6 +175,7 @@ ready(function() {
 
       // attach the click event for anotation
       // ---------------------- 
+
       chart.lines.dispatch.on("elementClick", function(e) {
         if (!e || e.length == 0) {
           return;
@@ -182,7 +183,7 @@ ready(function() {
 
         var point = e[0].point;
 
-        var message = window.prompt('Message ?');
+        var message = window.prompt('Annotation ?');
         if (message === null || message == '') {
           return;
         }
@@ -193,7 +194,7 @@ ready(function() {
         };
 
         var d = JSON.stringify(body);
-        app.json('/api/annotate/' + subreddit, 'POST', d, function() { window.alert('!') }, undefined);
+        app.json('/api/annotate/' + subreddit, 'POST', d, function() { app.audiences.draw(subreddit); }, undefined);
       });
 
       //Update the chart when window resizes.

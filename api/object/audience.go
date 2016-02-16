@@ -25,3 +25,8 @@ func AudienceFromApp(audience db.Audience) Audience {
 		Audience:  audience.Audience,
 	}
 }
+
+type Annotation struct {
+	Time    time.Time `json:"crawl_time"`
+	Message string    `json:"message"`
+}

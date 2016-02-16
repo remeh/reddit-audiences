@@ -20,12 +20,13 @@ type TodayHandler struct {
 }
 
 type todayHandlerResp struct {
-	Audiences       []object.Audience `json:"audiences"`
-	Average         int64             `json:"average"`
-	LowestAudience  object.Audience   `json:"lowest_audience"`
-	HighestAudience object.Audience   `json:"highest_audience"`
-	Articles        []object.Article  `json:"articles"`
-	DemoModeMessage bool              `json:"demo_mode_message"`
+	Audiences       []object.Audience   `json:"audiences"`
+	Average         int64               `json:"average"`
+	LowestAudience  object.Audience     `json:"lowest_audience"`
+	HighestAudience object.Audience     `json:"highest_audience"`
+	Articles        []object.Article    `json:"articles"`
+	Annotations     []object.Annotation `json:"annotations"`
+	DemoModeMessage bool                `json:"demo_mode_message"`
 }
 
 func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -70,6 +71,28 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	lowest, highest := app.LowestHighest(dataAudiences)
 	articles := object.ArticlesFromApp(dataArticles, dataRankings)
 
+	// If the user is logged in, we need to
+	// retrieve its annotations.
+	// ----------------------
+	user := app.GetUser(c.App.DB(), r)
+
+	annotations := make([]object.Annotation, 0)
+	if len(user.Email) > 0 {
+		after := time.Now().Add(-time.Hour * time.Duration(hours))
+		values, err := c.App.DB().FindAnnotations(subreddit, user.Uuid, after)
+		if err != nil {
+			log.Println("err:", err.Error())
+			w.WriteHeader(500)
+			return
+		}
+		for _, a := range values {
+			annotations = append(annotations, object.Annotation{
+				Message: a.Message,
+				Time:    a.Time,
+			})
+		}
+	}
+
 	// serialize and send response
 	// ----------------------
 
@@ -78,6 +101,7 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		Average:         app.Average(dataAudiences),
 		Articles:        articles,
 		DemoModeMessage: demoModeMessage,
+		Annotations:     annotations,
 		LowestAudience:  object.AudienceFromApp(lowest),
 		HighestAudience: object.AudienceFromApp(highest),
 	})
