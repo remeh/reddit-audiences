@@ -9,7 +9,10 @@ function ready(fn) {
 function onReady() {
   var app = {};
 
-  app.json = function(route, method, success, error) {
+  app.json = function(route, method, body, success, error) {
+    success = success || function() {};
+    error = error || function() {};
+
     var request = new XMLHttpRequest();
     request.open(method, route, true);
     request.onload = function() {
@@ -26,8 +29,13 @@ function onReady() {
         if (error) {
           error(request, request.status);
         }
-      };
-      request.send();
+      }
+
+      if (body) {;
+        request.send(body);
+      } else {
+        request.send();
+      }
   };
 
   app.data = function(field) {

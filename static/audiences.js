@@ -13,7 +13,7 @@ ready(function() {
         t = '?t=7d';
       }
     }
-    app.json('/api/today/' + subreddit + t, 'GET', this.on_receive_audience, this.on_error);
+    app.json('/api/today/' + subreddit + t, 'GET', undefined, this.on_receive_audience, this.on_error);
   };
 
   audiences.on_error = function(request) {
@@ -84,6 +84,7 @@ ready(function() {
         demo_mode_msg.style.display = 'none';
       }
     }
+
   };
 
   audiences.toggle_removed = function(checkbox) {
@@ -171,6 +172,29 @@ ready(function() {
       d3.select(domNodeSelector).append('svg')
           .datum(data)
           .call(chart);
+
+      // attach the click event for anotation
+      // ---------------------- 
+      chart.lines.dispatch.on("elementClick", function(e) {
+        if (!e || e.length == 0) {
+          return;
+        }
+
+        var point = e[0].point;
+
+        var message = window.prompt('Message ?');
+        if (message === null || message == '') {
+          return;
+        }
+
+        var body = {
+          t: new Date(point.x),
+          m: message
+        };
+
+        var d = JSON.stringify(body);
+        app.json('/api/annotate/' + subreddit, 'POST', d, function() { window.alert('!') }, undefined);
+      });
 
       //Update the chart when window resizes.
       nv.utils.windowResize(function() { chart.update(); });
