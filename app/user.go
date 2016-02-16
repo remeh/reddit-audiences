@@ -11,6 +11,7 @@ import (
 	"github.com/remeh/reddit-audiences/db"
 
 	"github.com/pborman/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // CreationSessions creates in-base a session for the
@@ -40,6 +41,18 @@ func SetSessionCookie(w http.ResponseWriter, session db.Session) {
 }
 
 // ----------------------
+
+// IsPasswordSecure checks that the given password
+// is strong enough to be used.
+func IsPasswordSecure(password string) bool {
+	// TODO(remy): check the password force
+	return true
+}
+
+func CryptPassword(password string) (string, error) {
+	b, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	return string(b), err
+}
 
 func GetUser(conn db.Conn, r *http.Request) db.User {
 	if r == nil {
