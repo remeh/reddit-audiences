@@ -76,3 +76,15 @@ CREATE TABLE "session" (
 
 CREATE UNIQUE INDEX ON "session" ("token");
 ALTER TABLE "session" ADD FOREIGN KEY ("uuid") REFERENCES "user" ("uuid");
+
+-- annotation
+
+CREATE TABLE "annotation" (
+    "owner" TEXT NOT NULL,
+    "subreddit" TEXT NOT NULL,
+    "time" TIMESTAMP WITH TIME ZONE, 
+    "message" TEXT default ''
+);
+
+CREATE INDEX ON "annotation" ("owner", "subreddit", "time");
+ALTER TABLE "annotation" ADD FOREIGN KEY ("owner") REFERENCES "user" ("uuid");

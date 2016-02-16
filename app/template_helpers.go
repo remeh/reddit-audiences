@@ -12,7 +12,13 @@ type Params struct {
 	// LoggedIn is set to true when the current user
 	// is logged in.
 	LoggedIn bool
-	User     User
+	User     ParamsUser
+}
+
+type ParamsUser struct {
+	Email     string
+	Firstname string
+	Lastname  string
 }
 
 func TmplParams(app *App, r *http.Request, page string) Params {
@@ -20,7 +26,11 @@ func TmplParams(app *App, r *http.Request, page string) Params {
 	return Params{
 		Page:     page,
 		LoggedIn: len(user.Email) > 0,
-		User:     user,
+		User: ParamsUser{
+			Email:     user.Email,
+			Firstname: user.Firstname,
+			Lastname:  user.Lastname,
+		},
 	}
 }
 

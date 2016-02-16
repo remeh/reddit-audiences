@@ -45,6 +45,13 @@ const (
 			"crawl_time" <= $3
 		ORDER BY "crawl_time"
 	`
+
+	INSERT_ANNOTATION = `
+		INSERT INTO "annotation"
+		("owner", "subreddit", "time", "message")
+		VALUES
+		($1, $2, $3, $4)
+	`
 )
 
 func (c Conn) FindArticles(subreddit string, start, end time.Time) ([]Article, error) {
@@ -164,4 +171,9 @@ func (c Conn) FindAudiencesInterval(subreddit string, start, end time.Time) ([]A
 	}
 
 	return rv, nil
+}
+
+func (c Conn) InsertAnnotation(owner, subreddit string, t time.Time, message string) error {
+	_, err := c.db.Exec(INSERT_ANNOTATION, owner, subreddit, t, message)
+	return err
 }

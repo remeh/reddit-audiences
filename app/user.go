@@ -13,12 +13,6 @@ import (
 	"github.com/pborman/uuid"
 )
 
-type User struct {
-	Email     string
-	Firstname string
-	Lastname  string
-}
-
 // CreationSessions creates in-base a session for the
 // given user already created in database.
 func CreateSession(conn db.Conn, user db.User, creationTime time.Time) (db.Session, error) {
@@ -47,14 +41,14 @@ func SetSessionCookie(w http.ResponseWriter, session db.Session) {
 
 // ----------------------
 
-func GetUser(conn db.Conn, r *http.Request) User {
+func GetUser(conn db.Conn, r *http.Request) db.User {
 	if r == nil {
-		return User{}
+		return db.User{}
 	}
 
 	cookie, err := r.Cookie("t")
 	if err != nil {
-		return User{}
+		return db.User{}
 	}
 
 	sessionToken := cookie.Value
@@ -62,14 +56,10 @@ func GetUser(conn db.Conn, r *http.Request) User {
 	user, err := conn.GetUserFromSessionToken(sessionToken)
 	if err != nil {
 		log.Printf("err: while getting an user from the session ID '%s': %s", sessionToken, err.Error())
-		return User{}
+		return db.User{}
 	}
 
 	conn.UpdateSession(sessionToken)
 
-	return User{
-		Email:     user.Email,
-		Firstname: user.Firstname,
-		Lastname:  user.Lastname,
-	}
+	return user
 }

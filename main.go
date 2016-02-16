@@ -19,7 +19,6 @@ func main() {
 }
 
 func declareWebRoutes(a *app.App) {
-	// Finally index
 	a.Add("/audiences/{subreddit}", web.Audiences{a}, "GET")
 
 	a.Add("/register", web.RegisterGet{a}, "GET")
@@ -37,4 +36,5 @@ func declareWebRoutes(a *app.App) {
 
 func declareApiRoutes(a *app.App) {
 	a.AddApi("/today/{subreddit}", LogRoute(a, TodayHandler{a}), "GET")
+	a.AddApi("/annotate/{subreddit}", LogRoute(a, AnnotateHandler{a}), "POST")
 }

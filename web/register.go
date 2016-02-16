@@ -166,7 +166,7 @@ func (c RegisterPost) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	p := registerParams{
 		Params: app.Params{
 			LoggedIn: true,
-			User:     app.User{Email: email},
+			User:     app.ParamsUser{Email: email},
 		},
 	}
 
