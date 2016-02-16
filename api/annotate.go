@@ -3,6 +3,8 @@
 package api
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
@@ -16,22 +18,32 @@ type AnnotateHandler struct {
 	App *app.App
 }
 
+type annotateBody struct {
+	Time    time.Time `json:"t"`
+	Message string    `json:"m"`
+}
+
 func (c AnnotateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	subreddit := vars["subreddit"]
 
-	r.ParseForm()
-	t := r.Form.Get("t")
-	message := r.Form.Get("m")
+	data, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(500)
+		log.Printf("err: while reading body of annotate: %s\n", err.Error())
+		return
+	}
 
-	if len(subreddit) == 0 || len(t) == 0 || len(message) == 0 {
+	defer r.Body.Close()
+
+	var body annotateBody
+	if err := json.Unmarshal(data, &body); err != nil {
 		w.WriteHeader(400)
 		return
 	}
 
-	parsedTime, err := time.Parse(time.RFC3339, t)
-	if err != nil {
+	if len(subreddit) == 0 || body.Time.IsZero() || len(body.Message) == 0 {
 		w.WriteHeader(400)
 		return
 	}
@@ -42,10 +54,10 @@ func (c AnnotateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = c.App.DB().InsertAnnotation(u.Uuid, subreddit, parsedTime, message)
+	err = c.App.DB().InsertAnnotation(u.Uuid, subreddit, body.Time, body.Message)
 	if err != nil {
 		w.WriteHeader(500)
-		log.Printf("err: while annotating by '%s' on '%s': %s", u.Email, subreddit, message)
+		log.Printf("err: while annotating by '%s' on '%s': %s", u.Email, subreddit, err.Error())
 		return
 	}
 }
