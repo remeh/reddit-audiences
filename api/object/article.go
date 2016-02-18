@@ -14,7 +14,7 @@ type Article struct {
 	ArticleTitle string          `json:"title"`
 	ArticleLink  string          `json:"link"`
 	State        db.ArticleState `json:"state"`
-	FirstSeen    *time.Time      `json:"first_seen,omitempty"`
+	FirstSeen    time.Time       `json:"first_seen,omitempty"`
 	Author       string          `json:"author"`
 	Promoted     bool            `json:"promoted"`
 	Sticky       bool            `json:"sticky"`
@@ -50,9 +50,6 @@ func ArticlesFromApp(articles []db.Article, rankings map[string][]db.Ranking) []
 
 func (r ByRank) computeRemoved() {
 	for i, tested := range r {
-		if tested.FirstSeen == nil {
-			continue
-		}
 		// ignore sticky and promoted ones.
 		if tested.Sticky || tested.Promoted {
 			continue
@@ -65,7 +62,7 @@ func (r ByRank) computeRemoved() {
 			}
 
 			if tested.CurrentRank == a.CurrentRank {
-				if tested.FirstSeen.Before(*a.FirstSeen) {
+				if tested.FirstSeen.Before(a.FirstSeen) {
 					tested.State = db.Removed
 					r[i] = tested
 					break
@@ -75,13 +72,15 @@ func (r ByRank) computeRemoved() {
 	}
 }
 
+// NOTE(remy): ranking is ORDER BY crawl_time, for first seen
+// and last seen, I could simply use [0] and [len()-1].
 func ArticleFromApp(article db.Article, ranking []db.Ranking) Article {
 	if ranking == nil {
 		return Article{}
 	}
 
 	var min, max, current int
-	var firstSeen *time.Time = nil
+	var firstSeen time.Time = time.Now()
 	var lastSeen time.Time
 	min = 10E6
 
@@ -95,10 +94,11 @@ func ArticleFromApp(article db.Article, ranking []db.Ranking) Article {
 
 		if r.CrawlTime.After(lastSeen) {
 			current = r.Rank
+			lastSeen = r.CrawlTime
 		}
 
-		if firstSeen == nil || r.CrawlTime.Before(*firstSeen) {
-			firstSeen = &r.CrawlTime
+		if r.CrawlTime.Before(firstSeen) {
+			firstSeen = r.CrawlTime
 		}
 	}
 
