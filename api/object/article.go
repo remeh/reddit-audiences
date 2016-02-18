@@ -15,12 +15,13 @@ type Article struct {
 	ArticleLink  string          `json:"link"`
 	State        db.ArticleState `json:"state"`
 	FirstSeen    time.Time       `json:"first_seen,omitempty"`
-	Author       string          `json:"author"`
-	Promoted     bool            `json:"promoted"`
-	Sticky       bool            `json:"sticky"`
-	MinRank      int             `json:"min_rank"`
-	CurrentRank  int             `json:"current_rank"`
-	MaxRank      int             `json:"max_rank"`
+	lastSeen     time.Time
+	Author       string `json:"author"`
+	Promoted     bool   `json:"promoted"`
+	Sticky       bool   `json:"sticky"`
+	MinRank      int    `json:"min_rank"`
+	CurrentRank  int    `json:"current_rank"`
+	MaxRank      int    `json:"max_rank"`
 	//Ranking      []Ranking `json:"ranking"`
 }
 
@@ -62,7 +63,7 @@ func (r ByRank) computeRemoved() {
 			}
 
 			if tested.CurrentRank == a.CurrentRank {
-				if tested.FirstSeen.Before(a.FirstSeen) {
+				if tested.lastSeen.Before(a.lastSeen) {
 					tested.State = db.Removed
 					r[i] = tested
 					break
@@ -120,6 +121,7 @@ func ArticleFromApp(article db.Article, ranking []db.Ranking) Article {
 		Sticky:       article.Sticky,
 		CurrentRank:  current,
 		FirstSeen:    firstSeen,
+		lastSeen:     lastSeen,
 		MinRank:      min,
 		MaxRank:      max,
 		//Ranking:      ranking,
