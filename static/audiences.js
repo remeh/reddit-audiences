@@ -160,7 +160,7 @@ ready(function() {
       });
 
       chart.xAxis
-        .tickPadding(15)
+        .tickPadding(5)
         .tickFormat(function(d) {
           return d3.time.format('%x %H:%M')(new Date(d))
       }).showMaxMin(true);
@@ -177,6 +177,9 @@ ready(function() {
       // ---------------------- 
 
       chart.lines.dispatch.on("elementClick", function(e) {
+        // NOTE(remy): cut off atm
+        return;
+
         if (!e || e.length == 0) {
           return;
         }
