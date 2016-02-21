@@ -43,7 +43,13 @@
       </div>
       <% if (!sticky && !promoted) { %>
       <div class="row">
-        <div class="col-lg-offset-10 col-lg-2 col-entry col-entry-small">
+        <div class="col-lg-2 col-entry-small">
+          Score: ${score}
+        </div>
+        <div class="col-lg-offset-1 col-lg-2 col-entry-small">
+          ${comments} comment<% if (comments > 1) { print('s') } %>
+        </div>
+        <div class="col-lg-offset-5 col-lg-2 col-entry col-entry-small">
           <% if (first_seen) { %>
             First seen on <% print(moment(new Date(first_seen)).format('Y-MM-DD')); %>
             at <% print(moment(new Date(first_seen)).format('HH:mm a')); %>

@@ -142,7 +142,6 @@ func readDOMData(subreddit string) (int64, int64, []db.Article, error) {
 		title := l.First()
 		link, _ := selec.Find("a.comments").Attr("href")
 		externalLink, _ := l.Attr("href")
-		strPos := selec.ChildrenFiltered(".rank").First()
 		articleId, _ := selec.Attr("data-fullname")
 		author, _ := selec.Attr("data-author")
 
@@ -151,12 +150,31 @@ func readDOMData(subreddit string) (int64, int64, []db.Article, error) {
 			articleId = strings.TrimPrefix(articleId, fmt.Sprintf("t%d_", i))
 		}
 
+		// rank
+		strPos := selec.ChildrenFiltered(".rank").First()
 		rank, err := strconv.Atoi(strPos.Text())
 		if err != nil {
 			rank = 0 // it's probably a promoted or stickied article
 		}
 
+		// score
+		strScore := selec.Find(".score.unvoted").First()
+		score, err := strconv.Atoi(strScore.Text())
+		if err != nil {
+			score = 0
+		}
+
+		// comments  count
+		strComments := selec.Find("a.comments").First().Text()
+		strComments = strings.Trim(strings.Replace(strComments, "comments", "", -1), " ")
+		comments, err := strconv.Atoi(strComments)
+		if err != nil {
+			comments = 0
+		}
+
 		promoted := false
+		// NOTE(remy): it shouldn't happen because the promoted articles
+		// look to be added by javascript.
 		if selec.HasClass("promoted") {
 			promoted = true
 		}
@@ -172,6 +190,8 @@ func readDOMData(subreddit string) (int64, int64, []db.Article, error) {
 			ArticleTitle:        title.Text(),
 			ArticleLink:         link,
 			ArticleExternalLink: externalLink,
+			Score:               score,
+			Comments:            comments,
 			Author:              author,
 			Rank:                rank,
 			CrawlTime:           now,

@@ -31,9 +31,9 @@ const (
 	`
 	INSERT_ARTICLE = `
 		INSERT INTO "article"
-		("subreddit", "article_id", "article_title", "article_link", "article_external_link", "author", "rank", "crawl_time", "promoted", "sticky")
+		("subreddit", "article_id", "article_title", "article_link", "article_external_link", "score", "comments", "author", "rank", "crawl_time", "promoted", "sticky")
 		VALUES
-		($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+		($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 	`
 	LAST_ARTICLE_STATE = `
 		SELECT "article_id", "rank"
@@ -92,7 +92,7 @@ func (c Conn) FindArticleLastState(subreddit, articleId string) (string, int, er
 }
 
 func (c Conn) InsertArticle(article Article) (sql.Result, error) {
-	return c.db.Exec(INSERT_ARTICLE, article.Subreddit, article.ArticleId, article.ArticleTitle, article.ArticleLink, article.ArticleExternalLink, article.Author, article.Rank, article.CrawlTime, article.Promoted, article.Sticky)
+	return c.db.Exec(INSERT_ARTICLE, article.Subreddit, article.ArticleId, article.ArticleTitle, article.ArticleLink, article.ArticleExternalLink, article.Score, article.Comments, article.Author, article.Rank, article.CrawlTime, article.Promoted, article.Sticky)
 }
 
 // GetSubredditsToCrawl returns the subreddits which must be

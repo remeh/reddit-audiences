@@ -44,6 +44,8 @@ CREATE TABLE "article" (
     "article_link" TEXT DEFAULT '',
     "author" TEXT DEFAULT '',
     "rank" INT DEFAULT 0,
+    "comments" INT DEFAULT 0,
+    "score" INT DEFAULT 0,
     "crawl_time" TIMESTAMP WITH TIME ZONE,
     "promoted" BOOLEAN DEFAULT false,
     "sticky" BOOLEAN DEFAULT false

@@ -16,6 +16,8 @@ type Article struct {
 	State        db.ArticleState `json:"state"`
 	FirstSeen    time.Time       `json:"first_seen,omitempty"`
 	lastSeen     time.Time
+	Score        int    `json:"score"`
+	Comments     int    `json:"comments"`
 	Author       string `json:"author"`
 	Promoted     bool   `json:"promoted"`
 	Sticky       bool   `json:"sticky"`
@@ -116,6 +118,8 @@ func ArticleFromApp(article db.Article, ranking []db.Ranking) Article {
 		ArticleTitle: article.ArticleTitle,
 		ArticleLink:  link,
 		State:        state,
+		Score:        article.Score,
+		Comments:     article.Comments,
 		Author:       article.Author,
 		Promoted:     article.Promoted,
 		Sticky:       article.Sticky,

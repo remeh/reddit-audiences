@@ -27,6 +27,8 @@ type Article struct {
 	ArticleTitle        string
 	ArticleLink         string
 	ArticleExternalLink string
+	Score               int
+	Comments            int
 	Author              string
 	Rank                int
 	CrawlTime           time.Time

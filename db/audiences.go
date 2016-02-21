@@ -11,7 +11,7 @@ import (
 const (
 	FIND_ARTICLES = `
 		SELECT * FROM (
-			SELECT DISTINCT ON ("subreddit", "article_id") "subreddit", "article_id", "article_title", "article_link", "article_external_link", "author", "rank", "crawl_time", "promoted", "sticky"
+			SELECT DISTINCT ON ("subreddit", "article_id") "subreddit", "article_id", "article_title", "article_link", "article_external_link", "score", "comments", "author", "rank", "crawl_time", "promoted", "sticky"
 			FROM
 				"article"
 			WHERE
@@ -113,11 +113,11 @@ func (c Conn) FindArticles(subreddit string, start, end time.Time) ([]Article, e
 
 	for r.Next() {
 		var subreddit, articleId, articleTitle, articleLink, articleExtLink, author string
-		var rank int
+		var rank, comments, score int
 		var crawlTime time.Time
 		var promoted, sticky bool
 
-		if err := r.Scan(&subreddit, &articleId, &articleTitle, &articleLink, &articleExtLink, &author, &rank, &crawlTime, &promoted, &sticky); err != nil {
+		if err := r.Scan(&subreddit, &articleId, &articleTitle, &articleLink, &articleExtLink, &score, &comments, &author, &rank, &crawlTime, &promoted, &sticky); err != nil {
 			return rv, err
 		}
 
@@ -128,6 +128,8 @@ func (c Conn) FindArticles(subreddit string, start, end time.Time) ([]Article, e
 				ArticleTitle:        articleTitle,
 				ArticleLink:         articleLink,
 				ArticleExternalLink: articleExtLink,
+				Score:               score,
+				Comments:            comments,
 				Author:              author,
 				Rank:                rank,
 				CrawlTime:           crawlTime,
