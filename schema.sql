@@ -32,7 +32,6 @@ CREATE TABLE "audience" (
 );
 
 CREATE UNIQUE INDEX ON "audience" ("subreddit", "crawl_time");
-CREATE INDEX ON "audience" ("subreddit", "crawl_time");
 
 -- article
 
@@ -51,7 +50,7 @@ CREATE TABLE "article" (
     "sticky" BOOLEAN DEFAULT false
 );
 
-CREATE INDEX ON "article" ("subreddit", "crawl_time");
+CREATE UNIQUE INDEX ON "article" ("subreddit", "crawl_time");
 
 -- user
 

@@ -217,12 +217,6 @@ func storeArticles(a *App, articles []db.Article) error {
 			return fmt.Errorf("while retrieving article last state: %s", err.Error())
 		}
 
-		// already stored at this rank
-		if article.ArticleId == id && rank == article.Rank {
-			continue
-		}
-
-		// not already store, do it now
 		if _, err := a.DB().InsertArticle(article); err != nil {
 			return err
 		}
