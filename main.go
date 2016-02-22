@@ -36,5 +36,6 @@ func declareWebRoutes(a *app.App) {
 
 func declareApiRoutes(a *app.App) {
 	a.AddApi("/today/{subreddit}", LogRoute(a, TodayHandler{a}), "GET")
+	a.AddApi("/article/{subreddit}/{articleId}", LogRoute(a, ArticleHandler{a}), "GET")
 	a.AddApi("/annotate/{subreddit}", LogRoute(a, AnnotateHandler{a}), "POST")
 }

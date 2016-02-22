@@ -66,3 +66,11 @@ type Session struct {
 	User    User
 	HitTime time.Time
 }
+
+// ----------------------
+
+type Rankings []Ranking
+
+func (r Rankings) Len() int           { return len(r) }
+func (r Rankings) Swap(a, b int)      { r[a], r[b] = r[b], r[a] }
+func (r Rankings) Less(a, b int) bool { return r[a].CrawlTime.Before(r[b].CrawlTime) }

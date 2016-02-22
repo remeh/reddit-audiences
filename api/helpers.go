@@ -8,6 +8,11 @@ import (
 	"net/http"
 )
 
+type ErrorResponse struct {
+	Message string `json:"message"`
+	Code    int    `json:"code"`
+}
+
 func render(w http.ResponseWriter, code int, r interface{}) {
 	if d, err := json.Marshal(r); err != nil {
 		w.WriteHeader(500)
@@ -15,7 +20,7 @@ func render(w http.ResponseWriter, code int, r interface{}) {
 		return
 	} else {
 		w.Write(d)
-		w.WriteHeader(200)
+		w.WriteHeader(code)
 		return
 	}
 }

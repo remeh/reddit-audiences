@@ -24,7 +24,6 @@ type Article struct {
 	MinRank      int    `json:"min_rank"`
 	CurrentRank  int    `json:"current_rank"`
 	MaxRank      int    `json:"max_rank"`
-	//Ranking      []Ranking `json:"ranking"`
 }
 
 type ByRank []Article
