@@ -34,7 +34,7 @@ const (
 			"time" >= $3
 	`
 	ARTICLES_RANKING = `
-		SELECT "rank", "article_id", "crawl_time"
+		SELECT "rank", "score", "comments", "article_id", "crawl_time"
 		FROM "article"
 		WHERE
 			"subreddit" = $1
@@ -157,11 +157,11 @@ func (c Conn) FindArticlesRanking(subreddit string, start, end time.Time) (map[s
 	defer r.Close()
 
 	for r.Next() {
-		var rank int
+		var rank, score, comments int
 		var articleId string
 		var crawlTime time.Time
 
-		if err := r.Scan(&rank, &articleId, &crawlTime); err != nil {
+		if err := r.Scan(&rank, &score, &comments, &articleId, &crawlTime); err != nil {
 			return rv, err
 		}
 
@@ -177,6 +177,8 @@ func (c Conn) FindArticlesRanking(subreddit string, start, end time.Time) (map[s
 			Subreddit: subreddit,
 			CrawlTime: crawlTime,
 			Rank:      rank,
+			Score:     score,
+			Comments:  comments,
 			ArticleId: articleId,
 		})
 	}

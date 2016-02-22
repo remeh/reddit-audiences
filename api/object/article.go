@@ -82,7 +82,7 @@ func ArticleFromApp(article db.Article, ranking []db.Ranking) Article {
 		return Article{}
 	}
 
-	var min, max, current int
+	var min, max, currentRank, currentScore, currentComments int
 	var firstSeen time.Time = time.Now()
 	var lastSeen time.Time
 	min = 10E6
@@ -96,7 +96,9 @@ func ArticleFromApp(article db.Article, ranking []db.Ranking) Article {
 		}
 
 		if r.CrawlTime.After(lastSeen) {
-			current = r.Rank
+			currentRank = r.Rank
+			currentScore = r.Score
+			currentComments = r.Comments
 			lastSeen = r.CrawlTime
 		}
 
@@ -118,12 +120,12 @@ func ArticleFromApp(article db.Article, ranking []db.Ranking) Article {
 		ArticleTitle: article.ArticleTitle,
 		ArticleLink:  link,
 		State:        state,
-		Score:        article.Score,
-		Comments:     article.Comments,
+		Score:        currentScore,
+		Comments:     currentComments,
 		Author:       article.Author,
 		Promoted:     article.Promoted,
 		Sticky:       article.Sticky,
-		CurrentRank:  current,
+		CurrentRank:  currentRank,
 		FirstSeen:    firstSeen,
 		lastSeen:     lastSeen,
 		MinRank:      min,

@@ -48,6 +48,8 @@ type Ranking struct {
 	ArticleId string
 	CrawlTime time.Time
 	Rank      int
+	Score     int
+	Comments  int
 }
 
 type User struct {
