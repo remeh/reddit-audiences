@@ -35,16 +35,6 @@ const (
 		VALUES
 		($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 	`
-	LAST_ARTICLE_STATE = `
-		SELECT "article_id", "rank"
-		FROM "article"
-		WHERE
-			"subreddit" = $1
-			AND
-			"article_id" = $2
-		ORDER BY crawl_time DESC
-		LIMIT 1
-	`
 	UPDATE_LAST_CRAWL_TIME = `
 		UPDATE "subreddit"
 		SET
@@ -61,34 +51,6 @@ func (c *Conn) Init(connString string) error {
 
 	c.db = dbase
 	return c.db.Ping()
-}
-
-// FindArticleLastState returns for the given subreddit and
-// article ID the article ID (if found) and its rank.
-// If the returned article ID is empty, it means that the
-// article hasn't been inserted in the DB yet.
-func (c Conn) FindArticleLastState(subreddit, articleId string) (string, int, error) {
-	var id string
-	var rank int
-
-	r, err := c.db.Query(LAST_ARTICLE_STATE, subreddit, articleId)
-	if err != nil {
-		return "", 0, err
-	}
-
-	if r == nil {
-		return "", 0, nil
-	}
-
-	defer r.Close()
-
-	if r.Next() {
-		if err := r.Scan(&id, &rank); err != nil {
-			return "", 0, err
-		}
-	}
-
-	return id, rank, nil
 }
 
 func (c Conn) InsertArticle(article Article) (sql.Result, error) {

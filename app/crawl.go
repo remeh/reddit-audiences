@@ -203,20 +203,13 @@ func readDOMData(subreddit string) (int64, int64, []db.Article, error) {
 	return audience, subscribers, articles, err
 }
 
-// storeArticles checks for each article if the
-// info isn't already present in database, if not,
-// it stores it. If changed, it also stores it.
+// storeArticles stores all given articles.
 func storeArticles(a *App, articles []db.Article) error {
 	if len(articles) == 0 {
 		return nil
 	}
 
 	for _, article := range articles {
-		id, rank, err := a.DB().FindArticleLastState(article.Subreddit, article.ArticleId)
-		if err != nil {
-			return fmt.Errorf("while retrieving article last state: %s", err.Error())
-		}
-
 		if _, err := a.DB().InsertArticle(article); err != nil {
 			return err
 		}
