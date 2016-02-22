@@ -51,10 +51,6 @@ const (
 			"subreddit" = $1
 			AND
 			"article_id" = $2
-			AND
-			"crawl_time" >= $3
-			AND
-			"crawl_time" <= $4
 		ORDER BY "crawl_time"
 	`
 	AUDIENCES_INTERVAL = `
@@ -155,10 +151,10 @@ func (c Conn) FindArticles(subreddit string, start, end time.Time) ([]Article, e
 	return rv, nil
 }
 
-func (c Conn) FindArticleRanking(subreddit, articleId string, start, end time.Time) ([]Ranking, error) {
+func (c Conn) FindArticleRanking(subreddit, articleId string) ([]Ranking, error) {
 	rv := make([]Ranking, 0)
 
-	r, err := c.db.Query(ARTICLE_RANKINGS, subreddit, articleId, start, end)
+	r, err := c.db.Query(ARTICLE_RANKINGS, subreddit, articleId)
 	if err != nil {
 		return rv, err
 	}
