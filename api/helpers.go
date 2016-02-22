@@ -19,8 +19,8 @@ func render(w http.ResponseWriter, code int, r interface{}) {
 		log.Printf("err: while rendering: %s", err.Error())
 		return
 	} else {
-		w.Write(d)
 		w.WriteHeader(code)
+		w.Write(d)
 		return
 	}
 }
