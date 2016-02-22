@@ -33,7 +33,7 @@ const (
 			AND
 			"time" >= $3
 	`
-	ARTICLES_RANKING = `
+	ARTICLES_RANKINGS = `
 		SELECT "rank", "score", "comments", "article_id", "crawl_time"
 		FROM "article"
 		WHERE
@@ -42,6 +42,19 @@ const (
 			"crawl_time" >= $2
 			AND
 			"crawl_time" <= $3
+		ORDER BY "crawl_time"
+	`
+	ARTICLE_RANKINGS = `
+		SELECT "rank", "score", "comments", "article_id", "crawl_time"
+		FROM "article"
+		WHERE
+			"subreddit" = $1
+			AND
+			"article_id" = $2
+			AND
+			"crawl_time" >= $3
+			AND
+			"crawl_time" <= $4
 		ORDER BY "crawl_time"
 	`
 	AUDIENCES_INTERVAL = `
@@ -142,10 +155,50 @@ func (c Conn) FindArticles(subreddit string, start, end time.Time) ([]Article, e
 	return rv, nil
 }
 
+func (c Conn) FindArticleRanking(subreddit, articleId string, start, end time.Time) ([]Ranking, error) {
+	rv := make([]Ranking, 0)
+
+	r, err := c.db.Query(ARTICLE_RANKINGS, subreddit, articleId, start, end)
+	if err != nil {
+		return rv, err
+	}
+
+	if r == nil {
+		return rv, nil
+	}
+
+	defer r.Close()
+
+	for r.Next() {
+		var rank, score, comments int
+		var articleId string
+		var crawlTime time.Time
+
+		if err := r.Scan(&rank, &score, &comments, &articleId, &crawlTime); err != nil {
+			return rv, err
+		}
+
+		if len(articleId) == 0 {
+			continue
+		}
+
+		rv = append(rv, Ranking{
+			Subreddit: subreddit,
+			CrawlTime: crawlTime,
+			Rank:      rank,
+			Score:     score,
+			Comments:  comments,
+			ArticleId: articleId,
+		})
+	}
+
+	return rv, nil
+}
+
 func (c Conn) FindArticlesRanking(subreddit string, start, end time.Time) (map[string][]Ranking, error) {
 	rv := make(map[string][]Ranking)
 
-	r, err := c.db.Query(ARTICLES_RANKING, subreddit, start, end)
+	r, err := c.db.Query(ARTICLES_RANKINGS, subreddit, start, end)
 	if err != nil {
 		return rv, err
 	}
