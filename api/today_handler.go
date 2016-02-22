@@ -3,7 +3,6 @@
 package api
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"time"
@@ -96,7 +95,7 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// serialize and send response
 	// ----------------------
 
-	buff, err := json.Marshal(todayHandlerResp{
+	render(w, 200, todayHandlerResp{
 		Audiences:       audiences,
 		Average:         app.Average(dataAudiences),
 		Articles:        articles,
@@ -105,14 +104,6 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		LowestAudience:  object.AudienceFromApp(lowest),
 		HighestAudience: object.AudienceFromApp(highest),
 	})
-
-	if err != nil {
-		log.Println("err:", err.Error())
-		w.WriteHeader(500)
-		return
-	}
-	w.Write(buff)
-
 }
 
 func (c TodayHandler) getData(subreddit string, hours int) ([]db.Audience, map[string][]db.Ranking, []db.Article, error) {
