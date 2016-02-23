@@ -1,64 +1,6 @@
 {{template "header.html" .}} 
-  <script type="text/template" id="template_article">
-    <div class="article <% if (state == 'removed') { print('article-removed'); } %>">
-      <div class="row">
-      <div class="col-lg-8"> 
-      <% if (promoted) { %>
-        <i class="fa fa-usd"> </i>
-      <% } else if (sticky) { %>
-        <i class="fa fa-tag"> </i>
-      <% } %>
-        <a href="${link}" title="<%- title %>"><%- title %></a>
-      </div>
-      <% if (promoted) { %>
-        <div class="col-lg-4">
-        </div>
-      <% } else if (sticky) { %>
-        <div class="col-lg-4">
-        </div>
-      <% } else { %>
-          <div class="col-lg-1 col-entry hint--bottom" data-hint='<% print( _.capitalize(state) ); %>'>
-          <% if (state == 'rising') { %>
-              <i class="fa fa-caret-up icon-rising"> </i>
-            <% } else if (state == 'falling') { %>
-              <i class="fa fa-caret-down icon-falling"> </i>
-            <% } else if (state == 'new') { %>
-              <i class="fa fa-plus icon-new"> </i>
-            <% } else if (state == 'removed') { %>
-              <i class="fa fa-times icon-removed"> </i>
-            <% } else { %>
-              <i class="fa fa-minus icon-minus"> </i>
-            <% } %>
-          </div>
-          <div class="col-lg-1 col-entry" title="Current rank">
-            ${current_rank}
-          </div>
-          <div class="col-lg-1 col-entry" title="Highest rank">
-            ${min_rank}
-          </div>
-          <div class="col-lg-1 col-entry" title="Lowest rank">
-            ${max_rank}
-          </div>
-      <% } %>
-      </div>
-      <% if (!sticky && !promoted) { %>
-      <div class="row">
-        <div class="col-lg-2 col-entry-small">
-          Score: ${score}
-        </div>
-        <div class="col-lg-offset-1 col-lg-2 col-entry-small">
-          ${comments} comment<% if (comments > 1) { print('s') } %>
-        </div>
-        <div class="col-lg-offset-5 col-lg-2 col-entry col-entry-small">
-          <% if (first_seen) { %>
-            First seen on <% print(moment(new Date(first_seen)).format('Y-MM-DD')); %>
-            at <% print(moment(new Date(first_seen)).format('HH:mm a')); %>
-          <% } %>
-        </div>
-      </div>
-      <% } %>
-    </div>
-  </script>
+  {{template "article_partial.html" .}}
+  {{template "article_info_partial.html" .}}
   <div class="audiences container" id="app-data" data-subreddit="{{.Subreddit }}">
     <div class="row" id="demomessage" style="display: none;">
       <p class="demo-message">
@@ -78,10 +20,6 @@
     </div>
     <div class="row">
       <div id="chart">
-      </div>
-    </div>
-    <div class="row">
-      <div id="chart_articles">
       </div>
     </div>
     <div class="row info">
