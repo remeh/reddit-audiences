@@ -48,7 +48,6 @@ function onReady() {
     }
 
     var el = document.getElementById('app-data');
-    console.log(el);
     if (!el) {
       return '';
     }
