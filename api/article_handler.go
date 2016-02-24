@@ -19,6 +19,9 @@ type ArticleHandler struct {
 }
 
 type articleHandlerResp struct {
+	// Article ID
+	Id string `json:"id"`
+
 	// time at which this articles appeared on the front page
 	FirstSeen time.Time `json:"first_seen"`
 	// time at which the article finally exited from the front page
@@ -56,6 +59,7 @@ func (c ArticleHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if len(user.Email) == 0 {
 		// demo mode
 		render(w, 200, articleHandlerResp{
+			Id:              articleId,
 			DemoModeMessage: true,
 		})
 		return
@@ -73,7 +77,12 @@ func (c ArticleHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp := articleHandlerResp{}
+	// compute and render
+	// ----------------------
+
+	resp := articleHandlerResp{
+		Id: articleId,
+	}
 	computeRankings(&resp, rankings)
 	render(w, 200, resp)
 }

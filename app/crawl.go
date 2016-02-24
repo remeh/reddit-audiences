@@ -140,6 +140,7 @@ func readDOMData(subreddit string) (int64, int64, []db.Article, error) {
 	s = doc.Find(".link").Each(func(i int, selec *goquery.Selection) {
 		l := selec.Find("p.title a.title")
 		title := l.First()
+		// NOTE(remy): for security reason, we could manually recreate the link
 		link, _ := selec.Find("a.comments").Attr("href")
 		externalLink, _ := l.Attr("href")
 		articleId, _ := selec.Attr("data-fullname")

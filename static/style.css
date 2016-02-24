@@ -123,6 +123,7 @@ div.main-container {
   padding: 1em;
   padding-bottom: 1.0em;
   border-bottom: 1px solid #eeeeee;
+  cursor: pointer;
 }
 
 .audiences .article:hover {

@@ -22,6 +22,95 @@ ready(function() {
 
   audiences.compile_templates = function() {
     audiences.templates['article'] = _.template(document.getElementById('template_article').innerHTML);
+    audiences.templates['article_info'] = _.template(document.getElementById('template_article_info').innerHTML);
+  };
+
+  // article_details is called when someone click on
+  // an article to display details.
+  // It calls the backend to retrieve articles details
+  // and then draw the new information if the user
+  // has the correct rights.
+  audiences.article_details = function(event, div) {
+    var id = div.getAttribute("data-id");
+    if (!id) {
+      return;
+    }
+
+    // TODO(remy): test if the details are already opened to close them.
+
+    app.json('/api/article/' + subreddit + '/' + id, 'GET', undefined, this.on_receive_article, this.on_error);
+  };
+
+  audiences.close_all_details = function() {
+    var nodes = document.querySelectorAll('.article-info');
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
+      node.innerHTML = '';
+    }
+  };
+
+  // on_receive_article is called when the backend has
+  // returned all the article information.
+  // If data.demo_mode is set true, no data have been
+  // returned because the user isn't logged in.
+  audiences.on_receive_article = function(xhr, data) {
+    if (!data.id) {
+      return;
+    }
+
+    // demo mode, display some appealing message
+    if (data.demo_mode_message) {
+      // close all others
+      audiences.close_all_details();
+    }
+
+    var rendered = audiences.templates['article_info']({
+      demo_mode_message: data.demo_mode_message,
+      id: data.id,
+    });
+
+    var container = document.getElementById('article-info-' + data.id);
+    container.insertAdjacentHTML('beforeend', rendered);
+    container.style.display = '';
+
+    // if not in demo mode, renders the graph.
+    if (!data.demo_mode_message) {
+      audiences.render_article_details(data);
+    }
+  };
+
+  audiences.render_article_details = function(data) {
+    if (!data || !data.id) {
+      return;
+    }
+
+    var graph_data = [];
+
+    // article details data
+    // ----------------------
+
+    var values = data.comments;
+    for (var i = 0; i < values.length; i++) {
+      var v = values[i];
+      graph_data.push({
+        x: new Date(v.time).getTime(),
+        y: v.value,
+      });
+    }
+
+    var lines_data = [
+    {
+      area: false,
+      values: graph_data,
+      key: 'Score',
+      color: '#ff7f0e',
+      strokeWidth: 2,
+    }];
+
+    // graph rendering.
+    // ----------------------
+
+    audiences.draw_graph(lines_data, '#article_chart_' + data.id);
   };
 
   audiences.on_receive_audience = function(xhr, data) {
@@ -70,6 +159,7 @@ ready(function() {
 
     // show demo mode message ?
     // ----------------------
+
     demo_mode_msg = document.getElementById("demomessage");
     if (demo_mode_msg) {
       if (data.demo_mode_message) {

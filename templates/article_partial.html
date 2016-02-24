@@ -1,5 +1,5 @@
 <script type="text/template" id="template_article">
-  <div class="article <% if (state == 'removed') { print('article-removed'); } %>">
+  <div onclick="app.audiences.article_details(event, this)" data-id="${id}" id="article-${id}" class="article <% if (state == 'removed') { print('article-removed'); } %>">
     <div class="row">
     <div class="col-lg-8"> 
     <% if (promoted) { %>
@@ -56,5 +56,7 @@
       </div>
     </div>
     <% } %>
+    <div id="article-info-${id}" class="row article-info" style="display: none;">
+    </div>
   </div>
 </script>

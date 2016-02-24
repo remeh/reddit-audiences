@@ -1,6 +1,12 @@
 <script type="text/template" id="template_article_info">
+<% if (demo_mode_message) { %>
+  <p class="demo-message">
+    <i class="fa fa-info"></i> You're in demo mode. Please <a href="/register" title="Create an account">create an account</a> or <a href="/signin" title="Sign in">Sign in</a> to access to article statistics.
+  </p>
+<% } else { %>
   <div class="row">
-    <div id="article_chart">
+    <div id="article_chart_${id}">
     </div>
   </div>
+<% } %>
 </script>
