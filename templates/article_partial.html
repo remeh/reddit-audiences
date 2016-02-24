@@ -1,12 +1,17 @@
 <script type="text/template" id="template_article">
   <div onclick="app.audiences.article_details(event, this)" data-id="${id}" id="article-${id}" class="article <% if (state == 'removed') { print('article-removed'); } %>">
     <div class="row">
+    <div class="col-lg-1 col-entry" title="Current rank">
+      <% if (+current_rank > 0) { %>
+        ${current_rank}
+      <% } %>
+      <% if (promoted) { %>
+        <i class="fa fa-usd"> </i>
+      <% } else if (sticky) { %>
+        <i class="fa fa-tag"> </i>
+      <% } %>
+    </div>
     <div class="col-lg-8"> 
-    <% if (promoted) { %>
-      <i class="fa fa-usd"> </i>
-    <% } else if (sticky) { %>
-      <i class="fa fa-tag"> </i>
-    <% } %>
       <a href="${link}" title="<%- title %>"><%- title %></a>
     </div>
     <% if (promoted) { %>
@@ -29,9 +34,6 @@
             <i class="fa fa-minus icon-minus"> </i>
           <% } %>
         </div>
-        <div class="col-lg-1 col-entry" title="Current rank">
-          ${current_rank}
-        </div>
         <div class="col-lg-1 col-entry" title="Highest rank">
           ${min_rank}
         </div>
@@ -42,10 +44,10 @@
     </div>
     <% if (!sticky && !promoted) { %>
     <div class="row">
-      <div class="col-lg-2 col-entry-small">
+      <div class="col-lg-offset-1 col-lg-2 col-entry-small">
         Score: ${score}
       </div>
-      <div class="col-lg-offset-1 col-lg-2 col-entry-small">
+      <div class="col-lg-2 col-entry-small">
         ${comments} comment<% if (comments > 1) { print('s') } %>
       </div>
       <div class="col-lg-offset-5 col-lg-2 col-entry col-entry-small">
