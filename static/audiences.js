@@ -140,7 +140,7 @@ ready(function() {
     // graph rendering.
     // ----------------------
 
-    audiences.draw_graph(lines_data, '#article_chart_' + id);
+    audiences.draw_graph(lines_data, '#article_chart_' + id, true);
   };
 
   audiences.on_receive_audience = function(xhr, data) {
@@ -166,7 +166,7 @@ ready(function() {
         strokeWidth: 2,
     }];
 
-    audiences.draw_graph(lines_data, '#chart');
+    audiences.draw_graph(lines_data, '#chart', false);
     audiences.update_labels(data);
 
     // articles
@@ -264,16 +264,21 @@ ready(function() {
     document.getElementById('highest').innerHTML = highest;
   };
 
-  audiences.draw_graph = function(data, domNodeSelector) {
+  audiences.draw_graph = function(data, domNodeSelector, margin) {
     // clear previous content
     d3.select(domNodeSelector).html('');
+
+    var m = {};
+    if (margin) {
+      m.right = 100;
+    }
 
     // create the graph
     nv.addGraph(function() {
       var chart = nv.models.lineChart()
         .options({
           useInteractiveGuideline: true,
-          margin: {right: 100},
+          margin: m,
           transitionDuration: 350,
           showLegend: true,
           showYAxis: true,
