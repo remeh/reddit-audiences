@@ -3,6 +3,7 @@ ready(function() {
 
   var audiences = {};
 
+  audiences.article_info = {};
   audiences.templates = {};
 
   audiences.draw = function(subreddit, duration) {
@@ -17,9 +18,11 @@ ready(function() {
   };
 
   audiences.on_error = function(request) {
-    alert('Error while retrieving the data for this subreddit.');
+    console.error('Error while retrieving the data for this subreddit.');
   };
 
+  // compile_templates compiles the template
+  // used in the audiences view.
   audiences.compile_templates = function() {
     audiences.templates['article'] = _.template(document.getElementById('template_article').innerHTML);
     audiences.templates['article_info'] = _.template(document.getElementById('template_article_info').innerHTML);
@@ -36,7 +39,12 @@ ready(function() {
       return;
     }
 
-    // TODO(remy): test if the details are already opened to close them.
+    var container = document.getElementById('article-info-' + id);
+    var select = document.getElementById('article_select_' + id);
+
+    if (container.innerHTML.trim() !== '') {
+      return;
+    }
 
     app.json('/api/article/' + subreddit + '/' + id, 'GET', undefined, this.on_receive_article, this.on_error);
   };
@@ -75,42 +83,64 @@ ready(function() {
 
     // if not in demo mode, renders the graph.
     if (!data.demo_mode_message) {
-      audiences.render_article_details(data);
+      // store the data for when we'll change the select
+      audiences.article_info = data;
+      audiences.render_article_details(data.id, data.ranks, 'Rank');
     }
   };
 
-  audiences.render_article_details = function(data) {
-    if (!data || !data.id) {
+  audiences.select_article_info_graph = function(select, event) {
+    var id = select.getAttribute('data-id');
+
+    if (!id) {
       return;
     }
 
-    var graph_data = [];
+    switch (+select.selectedIndex) {
+      case 0:
+        audiences.render_article_details(id, audiences.article_info.ranks, 'Rank');
+        break;
+      case 1:
+        audiences.render_article_details(id, audiences.article_info.scores, 'Score');
+        break;
+      case 2:
+        audiences.render_article_details(id, audiences.article_info.comments, 'Comments');
+        break;
+    }
+  };
+
+  audiences.render_article_details = function(id, data, label) {
+    if (!data) {
+      return;
+    }
+
+    var lines_data = [];
 
     // article details data
     // ----------------------
 
-    var values = data.comments;
-    for (var i = 0; i < values.length; i++) {
-      var v = values[i];
+    var graph_data = [];
+
+    for (var i = 0; i < data.length; i++) {
+      var v = data[i];
       graph_data.push({
         x: new Date(v.time).getTime(),
         y: v.value,
       });
     }
 
-    var lines_data = [
-    {
+    lines_data.push({
       area: false,
       values: graph_data,
-      key: 'Score',
+      key: label,
       color: '#ff7f0e',
       strokeWidth: 2,
-    }];
+    });
 
     // graph rendering.
     // ----------------------
 
-    audiences.draw_graph(lines_data, '#article_chart_' + data.id);
+    audiences.draw_graph(lines_data, '#article_chart_' + id);
   };
 
   audiences.on_receive_audience = function(xhr, data) {
@@ -241,16 +271,17 @@ ready(function() {
     // create the graph
     nv.addGraph(function() {
       var chart = nv.models.lineChart()
-                    .options({
-                      useInteractiveGuideline: true,
-                      transitionDuration: 350,
-                      showLegend: true,
-                      showYAxis: true,
-                      showXAxis: true,
+        .options({
+          useInteractiveGuideline: true,
+          margin: {right: 100},
+          transitionDuration: 350,
+          showLegend: true,
+          showYAxis: true,
+          showXAxis: true,
       });
 
       chart.xAxis
-        .tickPadding(5)
+        .tickPadding(3)
         .tickFormat(function(d) {
           return d3.time.format('%x %H:%M')(new Date(d))
       }).showMaxMin(true);

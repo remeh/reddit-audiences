@@ -126,6 +126,14 @@ div.main-container {
   cursor: pointer;
 }
 
+.audiences .article-info {
+  padding-top: 1em;
+  padding-left: 1em;
+}
+
+.audiences .article-chart {
+}
+
 .audiences .article:hover {
   background-color: white;
 }

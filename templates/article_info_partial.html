@@ -4,9 +4,12 @@
     <i class="fa fa-info"></i> You're in demo mode. Please <a href="/register" title="Create an account">create an account</a> or <a href="/signin" title="Sign in">Sign in</a> to access to article statistics.
   </p>
 <% } else { %>
-  <div class="row">
-    <div id="article_chart_${id}">
-    </div>
+  <select id="article_select_${id}" onchange="app.audiences.select_article_info_graph(this,event);" data-id="${id}">
+    <option selected>Rank</option>
+    <option>Score</option>
+    <option>Comments</option>
+  </select>
+  <div class="article-chart" id="article_chart_${id}">
   </div>
 <% } %>
 </script>
