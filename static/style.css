@@ -126,6 +126,10 @@ div.main-container {
   cursor: pointer;
 }
 
+.audiences .article-expanded {
+  box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.15);
+}
+
 .audiences .article-info {
   padding-top: 1em;
   padding-left: 1em;

@@ -46,6 +46,10 @@ ready(function() {
       return;
     }
 
+    var article_container = document.getElementById('article-' + id);
+    console.log(article_container.className);
+    article_container.className = article_container.className + ' article-expanded';
+
     app.json('/api/article/' + subreddit + '/' + id, 'GET', undefined, this.on_receive_article, this.on_error);
   };
 
