@@ -3,7 +3,7 @@ ready(function() {
 
   var audiences = {};
 
-  audiences.article_info = {};
+  audiences.article_info_cache = {};
   audiences.templates = {};
 
   audiences.draw = function(subreddit, duration) {
@@ -46,8 +46,9 @@ ready(function() {
       return;
     }
 
+    audiences.close_all_details();
+
     var article_container = document.getElementById('article-' + id);
-    console.log(article_container.className);
     article_container.className = article_container.className + ' article-expanded';
 
     app.json('/api/article/' + subreddit + '/' + id, 'GET', undefined, this.on_receive_article, this.on_error);
@@ -58,6 +59,13 @@ ready(function() {
     for (var i = 0; i < nodes.length; i++) {
       var node = nodes[i];
       node.innerHTML = '';
+    }
+
+    // remove the drop shadow
+    nodes = document.querySelectorAll('.article-expanded');
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
+      node.className = node.className.replace('article-expanded', '').trim();
     }
   };
 
@@ -88,7 +96,7 @@ ready(function() {
     // if not in demo mode, renders the graph.
     if (!data.demo_mode_message) {
       // store the data for when we'll change the select
-      audiences.article_info = data;
+      audiences.article_info_cache = data;
       audiences.render_article_details(data.id, data.ranks, 'Rank');
     }
   };
@@ -102,13 +110,13 @@ ready(function() {
 
     switch (+select.selectedIndex) {
       case 0:
-        audiences.render_article_details(id, audiences.article_info.ranks, 'Rank');
+        audiences.render_article_details(id, audiences.article_info_cache.ranks, 'Rank');
         break;
       case 1:
-        audiences.render_article_details(id, audiences.article_info.scores, 'Score');
+        audiences.render_article_details(id, audiences.article_info_cache.scores, 'Score');
         break;
       case 2:
-        audiences.render_article_details(id, audiences.article_info.comments, 'Comments');
+        audiences.render_article_details(id, audiences.article_info_cache.comments, 'Comments');
         break;
     }
   };
