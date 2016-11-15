@@ -1,0 +1,115 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "OfHbisNes0gI+S16gYBreh7Riv8=",
+			"path": "github.com/PuerkitoBio/goquery",
+			"revision": "152b1a2c8f5d0340f658bb656032a39b94e52958",
+			"revisionTime": "2016-08-31T16:22:11Z"
+		},
+		{
+			"checksumSHA1": "0cyj4kaj9Q0e9S55BPIr2zBuwvo=",
+			"path": "github.com/andybalholm/cascadia",
+			"revision": "65919c611220063037b1db8eb334acaf17a6d8ea",
+			"revisionTime": "2016-10-18T13:42:59Z"
+		},
+		{
+			"checksumSHA1": "g/V4qrXjUGG9B+e3hB+4NAYJ5Gs=",
+			"path": "github.com/gorilla/context",
+			"revision": "08b5f424b9271eedf6f9f0ce86cb9396ed337a42",
+			"revisionTime": "2016-08-17T18:46:32Z"
+		},
+		{
+			"checksumSHA1": "urMd7A9QPAJYY0GZJL9qBhlUmD8=",
+			"path": "github.com/gorilla/mux",
+			"revision": "757bef944d0f21880861c2dd9c871ca543023cba",
+			"revisionTime": "2016-09-20T23:08:13Z"
+		},
+		{
+			"checksumSHA1": "avqi4lkviHdrNJ92cXCwrw9x870=",
+			"path": "github.com/lib/pq",
+			"revision": "d8eeeb8bae8896dd8e1b7e514ab0d396c4f12a1b",
+			"revisionTime": "2016-11-03T02:43:54Z"
+		},
+		{
+			"checksumSHA1": "xppHi82MLqVx1eyQmbhTesAEjx8=",
+			"path": "github.com/lib/pq/oid",
+			"revision": "d8eeeb8bae8896dd8e1b7e514ab0d396c4f12a1b",
+			"revisionTime": "2016-11-03T02:43:54Z"
+		},
+		{
+			"checksumSHA1": "mhvIMH8oAtOiEyg37zWKmgb+6v4=",
+			"path": "github.com/pborman/uuid",
+			"revision": "3d4f2ba23642d3cfd06bd4b54cf03d99d95c0f1b",
+			"revisionTime": "2016-10-05T15:16:09Z"
+		},
+		{
+			"checksumSHA1": "KnX+F/OEYqUohP4MHLZKAYIlxn4=",
+			"path": "github.com/remeh/reddit-audiences",
+			"revision": "935f6eb20ceb990a608d552f0546104dd6be4b80",
+			"revisionTime": "2016-02-25T12:21:14Z"
+		},
+		{
+			"checksumSHA1": "wWZkCi35mv4eh2aK7GCfdTh1GzU=",
+			"path": "github.com/remeh/reddit-audiences/api",
+			"revision": "935f6eb20ceb990a608d552f0546104dd6be4b80",
+			"revisionTime": "2016-02-25T12:21:14Z"
+		},
+		{
+			"checksumSHA1": "ZQKrJx4Exfnutj8FKO9xdRRVUPE=",
+			"path": "github.com/remeh/reddit-audiences/api/object",
+			"revision": "935f6eb20ceb990a608d552f0546104dd6be4b80",
+			"revisionTime": "2016-02-25T12:21:14Z"
+		},
+		{
+			"checksumSHA1": "Gs7F8iVIsOQq+KKMzzAJXF9UGzM=",
+			"path": "github.com/remeh/reddit-audiences/app",
+			"revision": "935f6eb20ceb990a608d552f0546104dd6be4b80",
+			"revisionTime": "2016-02-25T12:21:14Z"
+		},
+		{
+			"checksumSHA1": "ZL4vxFhryQ/NxxzEN5N5XRvOkAo=",
+			"path": "github.com/remeh/reddit-audiences/db",
+			"revision": "935f6eb20ceb990a608d552f0546104dd6be4b80",
+			"revisionTime": "2016-02-25T12:21:14Z"
+		},
+		{
+			"checksumSHA1": "SwmW8assA7M22ttlljZ2hVTqO7U=",
+			"path": "github.com/remeh/reddit-audiences/web",
+			"revision": "935f6eb20ceb990a608d552f0546104dd6be4b80",
+			"revisionTime": "2016-02-25T12:21:14Z"
+		},
+		{
+			"checksumSHA1": "mzJm6o9laSuZluLTP4Xy4fTEyTI=",
+			"path": "github.com/vrischmann/envconfig",
+			"revision": "757beaaeac8d14bcc7ea3f71488d65cf45cf2eff",
+			"revisionTime": "2016-08-29T11:44:58Z"
+		},
+		{
+			"checksumSHA1": "vE43s37+4CJ2CDU6TlOUOYE0K9c=",
+			"path": "golang.org/x/crypto/bcrypt",
+			"revision": "9477e0b78b9ac3d0b03822fd95422e2fe07627cd",
+			"revisionTime": "2016-10-31T15:37:30Z"
+		},
+		{
+			"checksumSHA1": "JsJdKXhz87gWenMwBeejTOeNE7k=",
+			"path": "golang.org/x/crypto/blowfish",
+			"revision": "9477e0b78b9ac3d0b03822fd95422e2fe07627cd",
+			"revisionTime": "2016-10-31T15:37:30Z"
+		},
+		{
+			"checksumSHA1": "vqc3a+oTUGX8PmD0TS+qQ7gmN8I=",
+			"path": "golang.org/x/net/html",
+			"revision": "cac22060de4e495155959e69adcb4b45763ccb10",
+			"revisionTime": "2016-11-15T09:53:17Z"
+		},
+		{
+			"checksumSHA1": "00eQaGynDYrv3tL+C7l9xH0IDZg=",
+			"path": "golang.org/x/net/html/atom",
+			"revision": "cac22060de4e495155959e69adcb4b45763ccb10",
+			"revisionTime": "2016-11-15T09:53:17Z"
+		}
+	],
+	"rootPath": "github.com/remeh/reddit-audiences"
+}
