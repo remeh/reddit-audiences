@@ -109,7 +109,7 @@ func (c TodayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (c TodayHandler) getData(subreddit string, hours int) ([]db.Audience, map[string][]db.Ranking, []db.Article, error) {
 	var start, end time.Time
 
-	end = time.Date(2016, time.November, 03, 10, 00, 00, 00, time.UTC())
+	end = time.Date(2016, time.November, 03, 10, 00, 00, 00, time.UTC)
 	start = end.Add(-time.Hour * time.Duration(hours))
 
 	audiences, err := c.App.DB().FindAudiencesInterval(subreddit, start, end)
